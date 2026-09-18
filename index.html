@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="static/style.css?v=6">
+  <link rel="stylesheet" href="static/style.css?v=7">
 </head>
 <body>
   <header class="topbar">
@@ -34,6 +34,12 @@
         <label class="field">
           <span>You are playing as</span>
           <select id="my-player"></select>
+        </label>
+        <label class="field" id="my-list-field" hidden>
+          <span>Your list</span>
+          <select id="my-list">
+            <option value="any">Not selected</option>
+          </select>
         </label>
 
         <div class="progress-card">
@@ -74,6 +80,7 @@
             <div>
               <p class="eyebrow" id="opp-region"></p>
               <h2 id="opp-team-name"></h2>
+              <p class="hint" id="rate-list-scope">List: Not selected</p>
               <p class="hint">Keyboard: <kbd>1</kbd>–<kbd>9</kbd> <kbd>0</kbd>=10 · arrows between players · <kbd>L</kbd> lists · <kbd>N</kbd>/<kbd>P</kbd> team</p>
             </div>
             <div class="board-nav">
@@ -122,6 +129,6 @@
     </div>
   </div>
 
-  <script src="static/app.js?v=6"></script>
+  <script src="static/app.js?v=7"></script>
 </body>
 </html>

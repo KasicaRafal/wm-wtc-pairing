@@ -257,6 +257,7 @@ select:focus, input:focus, .score-btn:focus-visible, .btn:focus-visible, .team-i
   letter-spacing: 0.08em;
 }
 .board-head h2 { font-size: 2rem; line-height: 1; }
+#rate-list-scope { color: var(--brass); margin-top: 0.35rem; }
 .board-nav { display: flex; align-items: center; gap: 0.5rem; }
 
 .pill {
