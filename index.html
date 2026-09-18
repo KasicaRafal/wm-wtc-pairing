@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="static/style.css?v=7">
+  <link rel="stylesheet" href="static/style.css?v=9">
 </head>
 <body>
   <header class="topbar">
@@ -34,12 +34,6 @@
         <label class="field">
           <span>You are playing as</span>
           <select id="my-player"></select>
-        </label>
-        <label class="field" id="my-list-field" hidden>
-          <span>Your list</span>
-          <select id="my-list">
-            <option value="any">Not selected</option>
-          </select>
         </label>
 
         <div class="progress-card">
@@ -80,8 +74,7 @@
             <div>
               <p class="eyebrow" id="opp-region"></p>
               <h2 id="opp-team-name"></h2>
-              <p class="hint" id="rate-list-scope">List: Not selected</p>
-              <p class="hint">Keyboard: <kbd>1</kbd>–<kbd>9</kbd> <kbd>0</kbd>=10 · arrows between players · <kbd>L</kbd> lists · <kbd>N</kbd>/<kbd>P</kbd> team</p>
+              <p class="hint">Pick your list per opponent, then rate 1–10. Keyboard: <kbd>1</kbd>–<kbd>9</kbd> <kbd>0</kbd>=10 · arrows between players · <kbd>L</kbd> lists · <kbd>N</kbd>/<kbd>P</kbd> team</p>
             </div>
             <div class="board-nav">
               <button type="button" class="btn ghost" id="prev-team">← Previous</button>
@@ -129,6 +122,6 @@
     </div>
   </div>
 
-  <script src="static/app.js?v=7"></script>
+  <script src="static/app.js?v=9"></script>
 </body>
 </html>

@@ -7,7 +7,7 @@ const state = {
   myPlayerId: "",
   ratings: {},
   listRatings: {},
-  rateListKey: "any",
+  listChoice: {},
   oppTeamId: "",
   focusIdx: 0,
   teamQuery: "",
@@ -20,9 +20,6 @@ const state = {
 const els = {
   myTeam: document.getElementById("my-team"),
   myPlayer: document.getElementById("my-player"),
-  myList: document.getElementById("my-list"),
-  myListField: document.getElementById("my-list-field"),
-  rateListScope: document.getElementById("rate-list-scope"),
   teamSearch: document.getElementById("team-search"),
   teamList: document.getElementById("team-list"),
   progressLabel: document.getElementById("rate-progress-label"),
@@ -90,29 +87,47 @@ function myPlayerRecord() {
   return teamById(state.myTeamId)?.players.find((p) => p.id === state.myPlayerId) || null;
 }
 
-function activeRatings() {
-  if (state.rateListKey === "any") return state.ratings;
-  if (!state.listRatings[state.rateListKey]) state.listRatings[state.rateListKey] = {};
-  return state.listRatings[state.rateListKey];
+function listKeyFor(oppId) {
+  return state.listChoice[oppId] || "any";
 }
 
-function currentListScopeLabel() {
-  if (state.rateListKey === "any") return "List: Not selected";
+function ratingsBucket(listKey) {
+  if (listKey === "any") return state.ratings;
+  if (!state.listRatings[listKey]) state.listRatings[listKey] = {};
+  return state.listRatings[listKey];
+}
+
+function ratingFor(oppId, listKey = listKeyFor(oppId)) {
+  return ratingsBucket(listKey)[oppId];
+}
+
+function hasAnyRating(oppId) {
+  if (Number.isInteger(state.ratings[oppId])) return true;
+  return Object.values(state.listRatings).some((map) => Number.isInteger(map?.[oppId]));
+}
+
+function myListOptionsHtml(selected) {
   const me = myPlayerRecord();
-  const idx = Number(state.rateListKey);
-  const list = me?.lists?.[idx];
-  return `List ${idx + 1}: ${shortListLabel(list, idx)}`;
+  const lists = me?.lists || [];
+  return [`<option value="any"${selected === "any" ? " selected" : ""}>Not selected</option>`]
+    .concat(
+      lists.map((lst, i) => {
+        const key = String(i);
+        return `<option value="${key}"${key === selected ? " selected" : ""}>List ${i + 1}: ${escapeHtml(shortListLabel(lst, i))}</option>`;
+      })
+    )
+    .join("");
 }
 
-function otherRatingsHint(oppId) {
+function otherRatingsHint(oppId, listKey) {
   const parts = [];
-  if (state.rateListKey !== "any" && Number.isInteger(state.ratings[oppId])) {
+  if (listKey !== "any" && Number.isInteger(state.ratings[oppId])) {
     parts.push(`Any ${state.ratings[oppId]}`);
   }
   const me = myPlayerRecord();
   (me?.lists || []).forEach((lst, i) => {
     const key = String(i);
-    if (key === state.rateListKey) return;
+    if (key === listKey) return;
     const value = state.listRatings[key]?.[oppId];
     if (Number.isInteger(value)) parts.push(`L${i + 1} ${value}`);
   });
@@ -175,7 +190,7 @@ function slug(value) {
 function loadRatings() {
   state.ratings = {};
   state.listRatings = {};
-  state.rateListKey = "any";
+  state.listChoice = {};
   if (!state.myTeamId || !state.myPlayerId) return;
   try {
     const raw = localStorage.getItem(storageKey(state.myTeamId, state.myPlayerId));
@@ -183,10 +198,11 @@ function loadRatings() {
     const saved = JSON.parse(raw);
     state.ratings = saved.ratings || {};
     state.listRatings = saved.listRatings || {};
-    if (saved.rateListKey) state.rateListKey = String(saved.rateListKey);
+    state.listChoice = saved.listChoice || {};
   } catch {
     state.ratings = {};
     state.listRatings = {};
+    state.listChoice = {};
   }
 }
 
@@ -199,33 +215,13 @@ function saveRatings() {
       player: state.myPlayerId,
       ratings: state.ratings,
       listRatings: state.listRatings,
-      rateListKey: state.rateListKey,
+      listChoice: state.listChoice,
     })
   );
 }
 
 function ratedCountForTeam(team) {
-  const bucket = activeRatings();
-  return team.players.filter((p) => Number.isInteger(bucket[p.id])).length;
-}
-
-function fillListSelect() {
-  if (!els.myList || !els.myListField) return;
-  const me = myPlayerRecord();
-  if (!me) {
-    els.myListField.hidden = true;
-    state.rateListKey = "any";
-    return;
-  }
-  els.myListField.hidden = false;
-  const lists = me.lists || [];
-  els.myList.innerHTML = `<option value="any">Not selected</option>` +
-    lists
-      .map((lst, i) => `<option value="${i}">List ${i + 1}: ${escapeHtml(shortListLabel(lst, i))}</option>`)
-      .join("");
-  const valid = [...els.myList.options].some((o) => o.value === state.rateListKey);
-  if (!valid) state.rateListKey = "any";
-  els.myList.value = state.rateListKey;
+  return team.players.filter((p) => hasAnyRating(p.id)).length;
 }
 
 function progress() {
@@ -267,7 +263,7 @@ function renderProgress() {
   els.progressLabel.textContent = `${done} / ${teams}`;
   els.progressFill.style.width = teams ? `${(done / teams) * 100}%` : "0%";
   els.progressHint.textContent = state.myPlayerId
-    ? `${ratedPlayers} of ${totalPlayers} matchups · ${currentListScopeLabel()}`
+    ? `${ratedPlayers} of ${totalPlayers} matchups`
     : "Pick your team and yourself, then rate the opponents.";
   els.exportBtn.disabled = !state.myPlayerId;
   if (els.myListsBtn) els.myListsBtn.disabled = !state.myPlayerId;
@@ -340,13 +336,12 @@ function renderBoard() {
   els.oppRegion.textContent = team.region;
   els.oppName.textContent = team.name;
   els.oppIndex.textContent = `${idx + 1} / ${opps.length}`;
-  if (els.rateListScope) els.rateListScope.textContent = currentListScopeLabel();
 
-  const bucket = activeRatings();
   els.playerRows.innerHTML = team.players.map((p, i) => {
     const labels = listLabels(p);
-    const current = bucket[p.id];
-    const extra = otherRatingsHint(p.id);
+    const listKey = listKeyFor(p.id);
+    const current = ratingFor(p.id, listKey);
+    const extra = otherRatingsHint(p.id, listKey);
     const buttons = Array.from({ length: 10 }, (_, n) => {
       const val = n + 1;
       const selected = current === val ? `selected s${val}` : "";
@@ -366,6 +361,10 @@ function renderBoard() {
         </div>
       </div>
       <div class="rate-side">
+        <label class="field matchup-list">
+          <span>Your list</span>
+          <select data-my-list="${escapeAttr(p.id)}">${myListOptionsHtml(listKey)}</select>
+        </label>
         <div class="scores">${buttons}</div>
       </div>
     </article>`;
@@ -373,7 +372,7 @@ function renderBoard() {
 }
 
 function setRating(playerId, score) {
-  activeRatings()[playerId] = score;
+  ratingsBucket(listKeyFor(playerId))[playerId] = score;
   saveRatings();
   const team = teamById(state.oppTeamId);
   if (team) {
@@ -405,6 +404,7 @@ function exportOwn() {
     exportedAt: new Date().toISOString(),
     ratings: state.ratings,
     listRatings: state.listRatings,
+    listChoice: state.listChoice,
   };
   downloadJson(payload, `wtc-ratings-${slug(team.name)}-${slug(player.name)}.json`);
   toast("Ratings export saved.");
@@ -421,11 +421,10 @@ async function importOwnFile(file) {
   state.myPlayerId = player.id;
   state.ratings = data.ratings || {};
   state.listRatings = data.listRatings || {};
-  state.rateListKey = "any";
+  state.listChoice = data.listChoice || {};
   saveRatings();
   fillTeamSelect();
   fillPlayerSelect();
-  fillListSelect();
   setOppTeam(opponentTeams()[0]?.id);
   renderProgress();
   toast("Loaded your ratings.");
@@ -567,6 +566,12 @@ function scoreClass(n) {
   return "high";
 }
 
+function heatScore(n) {
+  const score = Number(n);
+  if (!Number.isInteger(score)) return 5;
+  return Math.min(10, Math.max(1, score));
+}
+
 function renderPairResults() {
   const data = state.pairResults;
   if (!data) {
@@ -629,7 +634,7 @@ function renderPairResults() {
               ${r.matrix.map((row, i) => `
                 <tr>
                   <th>${escapeHtml(r.ours[i])}</th>
-                  ${row.map((v, j) => `<td class="${r.pick[i] === j ? "pick" : ""}">${v}</td>`).join("")}
+                  ${row.map((v, j) => `<td class="heat-${heatScore(v)}${r.pick[i] === j ? " pick" : ""}">${v}</td>`).join("")}
                 </tr>
               `).join("")}
             </tbody>
@@ -685,7 +690,6 @@ function escapeAttr(value) {
 
 function onIdentityChange() {
   loadRatings();
-  fillListSelect();
   const opps = opponentTeams();
   if (!state.oppTeamId || state.oppTeamId === state.myTeamId) {
     state.oppTeamId = opps[0]?.id || "";
@@ -716,16 +720,7 @@ function bindEvents() {
 
   els.myPlayer.addEventListener("change", () => {
     state.myPlayerId = els.myPlayer.value;
-    state.rateListKey = "any";
     onIdentityChange();
-  });
-
-  els.myList?.addEventListener("change", () => {
-    state.rateListKey = els.myList.value || "any";
-    saveRatings();
-    renderProgress();
-    renderTeamList();
-    renderBoard();
   });
 
   els.teamSearch.addEventListener("input", () => {
@@ -738,6 +733,19 @@ function bindEvents() {
     if (btn) setOppTeam(btn.dataset.team);
   });
 
+  els.playerRows.addEventListener("change", (e) => {
+    const select = e.target.closest("[data-my-list]");
+    if (!select) return;
+    const playerId = select.dataset.myList;
+    const row = select.closest(".player-row");
+    if (row) state.focusIdx = Number(row.dataset.idx);
+    state.listChoice[playerId] = select.value || "any";
+    saveRatings();
+    renderBoard();
+    renderTeamList();
+    renderProgress();
+  });
+
   els.playerRows.addEventListener("click", (e) => {
     const listsBtn = e.target.closest("[data-lists]");
     if (listsBtn) {
@@ -746,6 +754,10 @@ function bindEvents() {
     }
     const btn = e.target.closest("[data-score]");
     if (!btn) return;
+    const row = btn.closest(".player-row");
+    if (row) state.focusIdx = Number(row.dataset.idx);
+    const select = row?.querySelector("[data-my-list]");
+    if (select) state.listChoice[btn.dataset.player] = select.value || "any";
     setRating(btn.dataset.player, Number(btn.dataset.score));
   });
 
