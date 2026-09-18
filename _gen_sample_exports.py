@@ -73,8 +73,32 @@ def slug(value: str) -> str:
     return n[:60]
 
 
+# Crafted 5×5: Maximize total takes 5+5+5+5+1=21 (min 1).
+# Avoid-worst takes 5+5+5+3+2=20 (min 2).
+TRADEOFF_MATRIX = [
+    [5, 2, 2, 2, 3],
+    [2, 5, 2, 2, 3],
+    [2, 2, 5, 2, 3],
+    [2, 2, 2, 5, 3],
+    [2, 2, 2, 2, 1],
+]
+TRADEOFF_TEAMS = ["USA Pinnacles", "Team Poland Tytus", "Flemish Giant"]
+
+
+def set_score(payload: dict, opp_id: str, score: int) -> None:
+    payload["ratings"][opp_id] = score
+    key = payload["listChoice"].get(opp_id)
+    if not key or key == "any":
+        key = "0"
+        payload["listChoice"][opp_id] = key
+    for bucket in payload["listRatings"].values():
+        bucket.pop(opp_id, None)
+    payload["listRatings"].setdefault(key, {})[opp_id] = score
+
+
 OUT.mkdir(parents=True, exist_ok=True)
 exported_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+payloads = []
 
 for player in our["players"]:
     rng = random.Random(f"wtc-sample|{player['id']}")
@@ -93,7 +117,7 @@ for player in our["players"]:
         list_choice[opp["id"]] = list_key
         list_ratings.setdefault(list_key, {})[opp["id"]] = score
 
-    payload = {
+    payloads.append({
         "version": 3,
         "type": "wtc-matchup-ratings",
         "team": our["name"],
@@ -106,9 +130,18 @@ for player in our["players"]:
         "ratings": ratings,
         "listRatings": list_ratings,
         "listChoice": list_choice,
-    }
-    filename = f"wtc-ratings-{slug(our['name'])}-{slug(player['name'])}.json"
-    (OUT / filename).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"{filename}  ({len(ratings)} ratings)")
+    })
 
-print(f"Wrote {len(our['players'])} files -> {OUT}")
+for team_name in TRADEOFF_TEAMS:
+    team = next(t for t in teams if t["name"] == team_name)
+    for i, payload in enumerate(payloads):
+        for j, them in enumerate(team["players"]):
+            set_score(payload, them["id"], TRADEOFF_MATRIX[i][j])
+    print(f"Tradeoff overlay -> {team_name}")
+
+for payload in payloads:
+    filename = f"wtc-ratings-{slug(our['name'])}-{slug(payload['player'])}.json"
+    (OUT / filename).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"{filename}  ({len(payload['ratings'])} ratings)")
+
+print(f"Wrote {len(payloads)} files -> {OUT}")
