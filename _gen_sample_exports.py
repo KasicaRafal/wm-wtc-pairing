@@ -13,7 +13,7 @@ our = next(t for t in teams if t["id"] == TEAM_ID)
 opponents = [p for t in teams if t["id"] != TEAM_ID for p in t["players"]]
 
 # Complementary biases so pairings have a clear "best" assignment.
-# Values are added to a base of 6, then jittered.
+# Values are added to a base of 3 on the 1–5 scale, then jittered.
 ARMY_BIAS = {
     "Brian Woods": {
         "Grymkin": 3,
@@ -82,12 +82,12 @@ for player in our["players"]:
     ratings = {}
     for opp in opponents:
         army = opp.get("army") or (opp.get("faction") or "").split(" - ")[0]
-        bias = biases.get(army, 0)
-        score = 6 + bias + rng.choice([-1, 0, 0, 0, 1])
-        ratings[opp["id"]] = max(1, min(10, score))
+        bias = max(-2, min(2, biases.get(army, 0)))
+        score = 3 + bias + rng.choice([-1, 0, 0, 0, 1])
+        ratings[opp["id"]] = max(1, min(5, score))
 
     payload = {
-        "version": 1,
+        "version": 3,
         "type": "wtc-matchup-ratings",
         "team": our["name"],
         "teamId": our["id"],

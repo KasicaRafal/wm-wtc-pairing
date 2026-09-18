@@ -1,5 +1,9 @@
 const EXPORT_TYPE = "wtc-matchup-ratings";
-const EXPORT_VERSION = 2;
+const EXPORT_VERSION = 3;
+const SCORE_MIN = 1;
+const SCORE_MAX = 5;
+const SCORE_MISSING = 3;
+const SCORE_TOTAL_MAX = 25;
 
 const state = {
   teams: [],
@@ -53,6 +57,48 @@ const els = {
 
 function storageKey(teamId, playerId) {
   return `wtc-ratings:${teamId}||${playerId}`;
+}
+
+function clampScore(n) {
+  if (!Number.isInteger(n)) return n;
+  return Math.min(SCORE_MAX, Math.max(SCORE_MIN, n));
+}
+
+function toFiveScale(n, legacy = false) {
+  if (!Number.isInteger(n)) return n;
+  if (legacy || n > SCORE_MAX) return clampScore(Math.ceil(n / 2));
+  return clampScore(n);
+}
+
+function convertRatingMap(map, legacy) {
+  const out = {};
+  Object.entries(map || {}).forEach(([key, value]) => {
+    if (Number.isInteger(value)) out[key] = toFiveScale(value, legacy);
+  });
+  return out;
+}
+
+function ratingMapsHaveLegacyScale(ratings, listRatings) {
+  const values = Object.values(ratings || {});
+  Object.values(listRatings || {}).forEach((map) => values.push(...Object.values(map || {})));
+  return values.some((value) => Number.isInteger(value) && value > SCORE_MAX);
+}
+
+function normalizeRatingSets(ratings, listRatings, version) {
+  const parsed = Number(version);
+  const legacy = !Number.isInteger(parsed) || parsed < 3 || ratingMapsHaveLegacyScale(ratings, listRatings);
+  if (!legacy) {
+    return {
+      ratings: ratings || {},
+      listRatings: listRatings || {},
+    };
+  }
+  return {
+    ratings: convertRatingMap(ratings, true),
+    listRatings: Object.fromEntries(
+      Object.entries(listRatings || {}).map(([key, map]) => [key, convertRatingMap(map, true)])
+    ),
+  };
 }
 
 function teamById(id) {
@@ -196,9 +242,11 @@ function loadRatings() {
     const raw = localStorage.getItem(storageKey(state.myTeamId, state.myPlayerId));
     if (!raw) return;
     const saved = JSON.parse(raw);
-    state.ratings = saved.ratings || {};
-    state.listRatings = saved.listRatings || {};
+    const normalized = normalizeRatingSets(saved.ratings, saved.listRatings, saved.version);
+    state.ratings = normalized.ratings;
+    state.listRatings = normalized.listRatings;
     state.listChoice = saved.listChoice || {};
+    saveRatings();
   } catch {
     state.ratings = {};
     state.listRatings = {};
@@ -211,6 +259,7 @@ function saveRatings() {
   localStorage.setItem(
     storageKey(state.myTeamId, state.myPlayerId),
     JSON.stringify({
+      version: EXPORT_VERSION,
       team: state.myTeamId,
       player: state.myPlayerId,
       ratings: state.ratings,
@@ -342,7 +391,7 @@ function renderBoard() {
     const listKey = listKeyFor(p.id);
     const current = ratingFor(p.id, listKey);
     const extra = otherRatingsHint(p.id, listKey);
-    const buttons = Array.from({ length: 10 }, (_, n) => {
+    const buttons = Array.from({ length: SCORE_MAX }, (_, n) => {
       const val = n + 1;
       const selected = current === val ? `selected s${val}` : "";
       return `<button type="button" class="score-btn ${selected}" data-player="${escapeAttr(p.id)}" data-score="${val}">${val}</button>`;
@@ -372,7 +421,7 @@ function renderBoard() {
 }
 
 function setRating(playerId, score) {
-  ratingsBucket(listKeyFor(playerId))[playerId] = score;
+  ratingsBucket(listKeyFor(playerId))[playerId] = clampScore(score);
   saveRatings();
   const team = teamById(state.oppTeamId);
   if (team) {
@@ -419,8 +468,9 @@ async function importOwnFile(file) {
   if (!player) throw new Error("Could not find the player from this file.");
   state.myTeamId = team.id;
   state.myPlayerId = player.id;
-  state.ratings = data.ratings || {};
-  state.listRatings = data.listRatings || {};
+  const normalized = normalizeRatingSets(data.ratings, data.listRatings, data.version);
+  state.ratings = normalized.ratings;
+  state.listRatings = normalized.listRatings;
   state.listChoice = data.listChoice || {};
   saveRatings();
   fillTeamSelect();
@@ -451,7 +501,13 @@ async function addPairFiles(fileList) {
       if (state.pairFiles.length && state.pairFiles[0].teamId !== data.teamId && state.pairFiles[0].team !== data.team) {
         throw new Error("All exports must come from the same team.");
       }
-      state.pairFiles.push(data);
+      const normalized = normalizeRatingSets(data.ratings, data.listRatings, data.version);
+      state.pairFiles.push({
+        ...data,
+        version: EXPORT_VERSION,
+        ratings: normalized.ratings,
+        listRatings: normalized.listRatings,
+      });
     } catch (err) {
       toast(err.message);
     }
@@ -490,7 +546,7 @@ function scoreDetail(exportFile, opponentId) {
       label: list ? `List ${idx + 1}: ${shortListLabel(list, idx)}` : `List ${idx + 1}`,
     });
   });
-  if (!found.length) return { score: 5, missing: true, listLabel: "" };
+  if (!found.length) return { score: SCORE_MISSING, missing: true, listLabel: "" };
   found.sort((a, b) => b.score - a.score || (a.listKey === "any" ? 1 : -1));
   return { score: found[0].score, missing: false, listLabel: found[0].label };
 }
@@ -561,15 +617,15 @@ function generatePairings() {
 }
 
 function scoreClass(n) {
-  if (n <= 4) return "low";
-  if (n <= 6) return "mid";
+  if (n <= 2) return "low";
+  if (n <= 3) return "mid";
   return "high";
 }
 
 function heatScore(n) {
   const score = Number(n);
-  if (!Number.isInteger(score)) return 5;
-  return Math.min(10, Math.max(1, score));
+  if (!Number.isInteger(score)) return SCORE_MISSING;
+  return clampScore(score);
 }
 
 function renderPairResults() {
@@ -588,12 +644,12 @@ function renderPairResults() {
   els.pairResults.innerHTML = `
     <div class="pair-summary">
       <div class="stat"><span>Team</span><strong>${escapeHtml(data.ourTeam)}</strong></div>
-      <div class="stat"><span>Avg. total vs field</span><strong>${avg.toFixed(1)} / 50</strong></div>
+      <div class="stat"><span>Avg. total vs field</span><strong>${avg.toFixed(1)} / ${SCORE_TOTAL_MAX}</strong></div>
       <div class="stat"><span>Hardest</span><strong>${escapeHtml(hardest.team)} (${hardest.sum})</strong></div>
       <div class="stat"><span>Easiest</span><strong>${escapeHtml(easiest.team)} (${easiest.sum})</strong></div>
     </div>
     <div class="pair-toolbar">
-      <p class="hint">Sorted from hardest (lowest total). Missing ratings count as 5.</p>
+      <p class="hint">Sorted from hardest (lowest total). Missing ratings count as ${SCORE_MISSING}.</p>
       <input type="search" id="pair-search" placeholder="Filter teams…" value="${escapeAttr(state.pairQuery)}">
     </div>
     ${rows.map((r) => `
@@ -603,7 +659,7 @@ function renderPairResults() {
             <p class="eyebrow">${escapeHtml(r.region)}</p>
             <h3>${escapeHtml(r.team)}</h3>
           </div>
-          <div class="pair-score">Total ${r.sum}/50 · min ${r.min}</div>
+          <div class="pair-score">Total ${r.sum}/${SCORE_TOTAL_MAX} · min ${r.min}</div>
         </div>
         <div class="pairing-grid pairing-head">
           <div>Our player</div>
@@ -790,14 +846,10 @@ function bindEvents() {
     const tag = document.activeElement?.tagName;
     if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
 
-    if (e.key >= "1" && e.key <= "9") {
+    if (e.key >= "1" && e.key <= String(SCORE_MAX)) {
       const team = teamById(state.oppTeamId);
       const player = team?.players[state.focusIdx];
       if (player) setRating(player.id, Number(e.key));
-    } else if (e.key === "0") {
-      const team = teamById(state.oppTeamId);
-      const player = team?.players[state.focusIdx];
-      if (player) setRating(player.id, 10);
     } else if (e.key === "ArrowDown") {
       e.preventDefault();
       state.focusIdx = Math.min(4, state.focusIdx + 1);

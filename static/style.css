@@ -319,11 +319,11 @@ select:focus, input:focus, .score-btn:focus-visible, .btn:focus-visible, .team-i
 
 .score-btn:hover { border-color: var(--brass); color: var(--text); }
 .score-btn.selected { color: #0b0f14; border-color: transparent; }
-.score-btn.s1, .score-btn.s2 { background: #9b2b24; }
-.score-btn.s3, .score-btn.s4 { background: #c56a2b; }
-.score-btn.s5, .score-btn.s6 { background: var(--mid); }
-.score-btn.s7, .score-btn.s8 { background: #7fb03a; }
-.score-btn.s9, .score-btn.s10 { background: var(--good); }
+.score-btn.s1 { background: #8b1e1a; }
+.score-btn.s2 { background: #d3541f; }
+.score-btn.s3 { background: #c9a227; }
+.score-btn.s4 { background: #6aaa3d; }
+.score-btn.s5 { background: #3ea36d; }
 
 #tab-pair { display: flex; flex-direction: column; gap: 1.1rem; }
 
@@ -454,15 +454,10 @@ select:focus, input:focus, .score-btn:focus-visible, .btn:focus-visible, .team-i
 .matrix th { background: var(--surface-2); font-weight: 600; color: var(--text); }
 .matrix td { font-weight: 700; font-variant-numeric: tabular-nums; }
 .matrix td.heat-1 { background: #8b1e1a; color: #f7e7e5; }
-.matrix td.heat-2 { background: #b32a22; color: #f7e7e5; }
-.matrix td.heat-3 { background: #d3541f; color: #16110c; }
-.matrix td.heat-4 { background: #e07a1f; color: #16110c; }
-.matrix td.heat-5 { background: #c9a227; color: #16110c; }
-.matrix td.heat-6 { background: #b3b02c; color: #16110c; }
-.matrix td.heat-7 { background: #8fb03a; color: #10150c; }
-.matrix td.heat-8 { background: #6aaa3d; color: #10150c; }
-.matrix td.heat-9 { background: #4a9e58; color: #0c140f; }
-.matrix td.heat-10 { background: #3ea36d; color: #0c140f; }
+.matrix td.heat-2 { background: #d3541f; color: #16110c; }
+.matrix td.heat-3 { background: #c9a227; color: #16110c; }
+.matrix td.heat-4 { background: #6aaa3d; color: #10150c; }
+.matrix td.heat-5 { background: #3ea36d; color: #0c140f; }
 .matrix td.pick {
   outline: 2px solid #f3d48a;
   outline-offset: -2px;
