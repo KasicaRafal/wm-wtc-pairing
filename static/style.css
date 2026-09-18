@@ -440,6 +440,7 @@ select:focus, input:focus, .score-btn:focus-visible, .btn:focus-visible, .team-i
   margin-top: 0.12rem;
   overflow-wrap: anywhere;
 }
+.pair-list { color: var(--brass); }
 .score-num {
   font-weight: 700;
   font-size: 1.15rem;

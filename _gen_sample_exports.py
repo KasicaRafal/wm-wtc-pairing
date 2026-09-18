@@ -80,11 +80,18 @@ for player in our["players"]:
     rng = random.Random(f"wtc-sample|{player['id']}")
     biases = ARMY_BIAS[player["name"]]
     ratings = {}
+    list_choice = {}
+    list_ratings = {}
+    list_count = max(1, len(player.get("lists") or []))
     for opp in opponents:
         army = opp.get("army") or (opp.get("faction") or "").split(" - ")[0]
         bias = max(-2, min(2, biases.get(army, 0)))
         score = 3 + bias + rng.choice([-1, 0, 0, 0, 1])
-        ratings[opp["id"]] = max(1, min(5, score))
+        score = max(1, min(5, score))
+        list_key = str(rng.randrange(list_count))
+        ratings[opp["id"]] = score
+        list_choice[opp["id"]] = list_key
+        list_ratings.setdefault(list_key, {})[opp["id"]] = score
 
     payload = {
         "version": 3,
@@ -97,6 +104,8 @@ for player in our["players"]:
         "exportedAt": exported_at,
         "sample": True,
         "ratings": ratings,
+        "listRatings": list_ratings,
+        "listChoice": list_choice,
     }
     filename = f"wtc-ratings-{slug(our['name'])}-{slug(player['name'])}.json"
     (OUT / filename).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")

@@ -129,6 +129,19 @@ function shortListLabel(list, index) {
   return label.length > 52 ? `${label.slice(0, 49)}…` : label;
 }
 
+function pairingListLines(player, selectedKey) {
+  const lists = player?.lists || [];
+  const idx = selectedKey != null && selectedKey !== "any" ? Number(selectedKey) : NaN;
+  if (!Number.isInteger(idx) || !lists[idx]) return [];
+  return [`List ${idx + 1}: ${shortListLabel(lists[idx], idx)}`];
+}
+
+function pairingListHtml(lines) {
+  return (lines || [])
+    .map((line) => `<div class="pair-sub pair-list">${escapeHtml(line)}</div>`)
+    .join("");
+}
+
 function myPlayerRecord() {
   return teamById(state.myTeamId)?.players.find((p) => p.id === state.myPlayerId) || null;
 }
@@ -530,25 +543,28 @@ function scoreOf(exportFile, opponentId) {
   return scoreDetail(exportFile, opponentId).score;
 }
 
+function chosenListKey(exportFile, opponentId) {
+  const chosen = exportFile.listChoice?.[opponentId];
+  if (chosen && chosen !== "any") return String(chosen);
+  const rated = Object.entries(exportFile.listRatings || {})
+    .filter(([, map]) => Number.isInteger(map?.[opponentId]))
+    .map(([key]) => key);
+  return rated.length === 1 ? rated[0] : "any";
+}
+
 function scoreDetail(exportFile, opponentId) {
-  const found = [];
+  const listKey = chosenListKey(exportFile, opponentId);
+  if (listKey !== "any") {
+    const chosenScore = exportFile.listRatings?.[listKey]?.[opponentId];
+    if (Number.isInteger(chosenScore)) {
+      return { score: chosenScore, missing: false, listKey };
+    }
+  }
   const general = exportFile.ratings?.[opponentId];
-  if (Number.isInteger(general)) found.push({ score: general, listKey: "any", label: "" });
-  const player = playerById(exportFile.playerId)?.player;
-  Object.entries(exportFile.listRatings || {}).forEach(([key, map]) => {
-    const value = map?.[opponentId];
-    if (!Number.isInteger(value)) return;
-    const idx = Number(key);
-    const list = player?.lists?.[idx];
-    found.push({
-      score: value,
-      listKey: key,
-      label: list ? `List ${idx + 1}: ${shortListLabel(list, idx)}` : `List ${idx + 1}`,
-    });
-  });
-  if (!found.length) return { score: SCORE_MISSING, missing: true, listLabel: "" };
-  found.sort((a, b) => b.score - a.score || (a.listKey === "any" ? 1 : -1));
-  return { score: found[0].score, missing: false, listLabel: found[0].label };
+  if (Number.isInteger(general)) {
+    return { score: general, missing: false, listKey: listKey !== "any" ? listKey : "any" };
+  }
+  return { score: SCORE_MISSING, missing: true, listKey };
 }
 
 function bestAssignment(matrix, mode) {
@@ -585,17 +601,22 @@ function generatePairings() {
     const details = ours.map((me) => opp.players.map((them) => scoreDetail(me, them.id)));
     const matrix = details.map((row) => row.map((d) => d.score));
     const best = bestAssignment(matrix, state.pairMode);
-    const lines = best.perm.map((j, i) => ({
-      us: ours[i].player,
-      usId: ours[i].playerId,
-      usFaction: ours[i].faction,
-      usList: details[i][j].listLabel,
-      them: opp.players[j].name,
-      themId: opp.players[j].id,
-      themFaction: opp.players[j].faction,
-      score: best.scores[i],
-      missing: details[i][j].missing,
-    }));
+    const lines = best.perm.map((j, i) => {
+      const themPlayer = opp.players[j];
+      const usPlayer = playerById(ours[i].playerId)?.player;
+      const detail = details[i][j];
+      return {
+        us: ours[i].player,
+        usId: ours[i].playerId,
+        usFaction: ours[i].faction,
+        usLists: pairingListLines(usPlayer, detail.listKey),
+        them: themPlayer.name,
+        themId: themPlayer.id,
+        themFaction: themPlayer.faction,
+        score: best.scores[i],
+        missing: detail.missing,
+      };
+    });
     return {
       team: opp.name,
       region: opp.region,
@@ -671,7 +692,7 @@ function renderPairResults() {
             <div>
               <button type="button" class="linkish" data-lists="${escapeAttr(l.usId || "")}">${escapeHtml(l.us)}</button>
               <div class="pair-sub">${escapeHtml(l.usFaction || "")}</div>
-              ${l.usList ? `<div class="pair-sub">${escapeHtml(l.usList)}</div>` : ""}
+              ${pairingListHtml(l.usLists)}
             </div>
             <div>
               <button type="button" class="linkish" data-lists="${escapeAttr(l.themId || "")}">${escapeHtml(l.them)}</button>
