@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WTC Pairings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="static/style.css?v=6">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">WTC</span>
+      <div>
+        <h1>Pairing Planner</h1>
+        <p>Matchup ratings and optimal 5v5 pairings</p>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button type="button" class="tab active" data-tab="rate" role="tab" aria-selected="true">1. Ratings</button>
+      <button type="button" class="tab" data-tab="pair" role="tab" aria-selected="false">2. Pairings</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="tab-rate" class="tab-panel">
+      <aside class="sidebar">
+        <label class="field">
+          <span>Your team</span>
+          <select id="my-team"></select>
+        </label>
+        <label class="field">
+          <span>You are playing as</span>
+          <select id="my-player"></select>
+        </label>
+
+        <div class="progress-card">
+          <div class="progress-head">
+            <span>Rating progress</span>
+            <strong id="rate-progress-label">0 / 0</strong>
+          </div>
+          <div class="progress-bar" aria-hidden="true">
+            <div id="rate-progress-fill"></div>
+          </div>
+          <p class="hint" id="rate-progress-hint">Pick your team and yourself, then rate the opponents.</p>
+        </div>
+
+        <label class="field">
+          <span>Search teams</span>
+          <input type="search" id="team-search" placeholder="Name or faction…">
+        </label>
+        <div id="team-list" class="team-list"></div>
+
+        <div class="sidebar-actions">
+          <button type="button" class="btn ghost" id="my-lists-btn" disabled>View my lists</button>
+          <button type="button" class="btn primary" id="export-btn" disabled>Export my ratings</button>
+          <label class="btn ghost file-btn">
+            Load my export
+            <input type="file" id="import-own" accept=".json,application/json" hidden>
+          </label>
+        </div>
+      </aside>
+
+      <div class="workspace">
+        <div id="rate-empty" class="empty-state">
+          <h2>Start with yourself</h2>
+          <p>Pick your team and yourself on the left. Then rate how comfortable you feel playing into each opponent — 1 (nightmare) to 10 (dream matchup).</p>
+        </div>
+
+        <div id="rate-board" hidden>
+          <div class="board-head">
+            <div>
+              <p class="eyebrow" id="opp-region"></p>
+              <h2 id="opp-team-name"></h2>
+              <p class="hint">Keyboard: <kbd>1</kbd>–<kbd>9</kbd> <kbd>0</kbd>=10 · arrows between players · <kbd>L</kbd> lists · <kbd>N</kbd>/<kbd>P</kbd> team</p>
+            </div>
+            <div class="board-nav">
+              <button type="button" class="btn ghost" id="prev-team">← Previous</button>
+              <span id="opp-index" class="pill"></span>
+              <button type="button" class="btn ghost" id="next-team">Next →</button>
+            </div>
+          </div>
+          <div id="player-rows" class="player-rows"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-pair" class="tab-panel" hidden>
+      <div class="pair-setup">
+        <div>
+          <h2>Import team ratings</h2>
+          <p class="hint">Drop the exports from all 5 players on the same team. We’ll compute the best pairings against every other team.</p>
+        </div>
+        <div class="drop-zone" id="pair-drop">
+          <input type="file" id="pair-files" accept=".json,application/json" multiple hidden>
+          <p>Drop 5 JSON files here, or <button type="button" class="link-btn" id="pair-browse">browse files</button></p>
+        </div>
+        <div id="pair-imports" class="import-chips"></div>
+        <div class="pair-controls">
+          <fieldset class="mode-field">
+            <legend>Optimization goal</legend>
+            <label><input type="radio" name="pair-mode" value="sum" checked> Maximize total score</label>
+            <label><input type="radio" name="pair-mode" value="min"> Avoid the worst matchups</label>
+          </fieldset>
+          <button type="button" class="btn primary" id="generate-btn" disabled>Generate pairings</button>
+          <button type="button" class="btn ghost" id="export-pairings" hidden>Export results CSV</button>
+        </div>
+      </div>
+      <div id="pair-results" class="pair-results" hidden></div>
+    </section>
+  </main>
+
+  <div class="modal" id="lists-modal" hidden>
+    <div class="modal-backdrop" id="lists-backdrop"></div>
+    <div class="modal-content lists-modal" role="dialog" aria-modal="true" aria-labelledby="lists-title">
+      <button type="button" class="modal-close" id="lists-close" aria-label="Close">×</button>
+      <p class="eyebrow" id="lists-meta"></p>
+      <h2 id="lists-title"></h2>
+      <div id="lists-body" class="lists-grid"></div>
+    </div>
+  </div>
+
+  <script src="static/app.js?v=6"></script>
+</body>
+</html>
