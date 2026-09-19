@@ -1191,7 +1191,7 @@
             },
             {
               "name": "Heretic",
-              "caster": "Isaiah, Dread Harvester",
+              "caster": "The Heretic",
               "entries": [
                 {
                   "name": "The Heretic",
@@ -1307,7 +1307,7 @@
           "lists": [
             {
               "name": "All in All, It's Just Another Bear in the Wall",
-              "caster": "All in All, It's Just Another Bear in the Wall",
+              "caster": "Kapitan Maksim Azlanov",
               "entries": [
                 {
                   "name": "Feral",
@@ -1410,7 +1410,7 @@
             },
             {
               "name": "Kapitan Kazimir Morozov",
-              "caster": "Drago, The Beast Unchained",
+              "caster": "Kapitan Kazimir Morozov",
               "entries": [
                 {
                   "name": "Drago, The Beast Unchained",
@@ -2067,7 +2067,7 @@
           "lists": [
             {
               "name": "Resting witch face, but wearing it fabulously",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "Zevanna Agha, The Fate Keeper",
               "entries": [
                 {
                   "name": "Cage Rager",
@@ -2138,13 +2138,48 @@
                   "name": "The Bloody Parliament",
                   "points": 9,
                   "attachment": false
+                },
+                {
+                  "name": "Accursed",
+                  "points": null,
+                  "attachment": false
+                },
+                {
+                  "name": "Blessings of the Gods",
+                  "points": null,
+                  "attachment": false
+                },
+                {
+                  "name": "Fortune’s Path",
+                  "points": null,
+                  "attachment": false
+                },
+                {
+                  "name": "Ill Omens",
+                  "points": null,
+                  "attachment": false
+                },
+                {
+                  "name": "Labyrinth",
+                  "points": null,
+                  "attachment": false
+                },
+                {
+                  "name": "Sacrifice",
+                  "points": null,
+                  "attachment": false
+                },
+                {
+                  "name": "Shroud",
+                  "points": null,
+                  "attachment": false
                 }
               ],
               "commands": []
             },
             {
               "name": "The King of Nothing",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The King of Nothing",
               "entries": [
                 {
                   "name": "Clockatrice 1",
@@ -2179,6 +2214,11 @@
                 {
                   "name": "Carver Ultimus",
                   "points": 20,
+                  "attachment": false
+                },
+                {
+                  "name": "War Boar MMD47",
+                  "points": null,
                   "attachment": false
                 },
                 {
@@ -2224,6 +2264,41 @@
                 {
                   "name": "Hollow Holden",
                   "points": 1,
+                  "attachment": false
+                },
+                {
+                  "name": "Accursed",
+                  "points": null,
+                  "attachment": false
+                },
+                {
+                  "name": "Blessings of the Gods",
+                  "points": null,
+                  "attachment": false
+                },
+                {
+                  "name": "Fortune’s Path",
+                  "points": null,
+                  "attachment": false
+                },
+                {
+                  "name": "Ill Omens",
+                  "points": null,
+                  "attachment": false
+                },
+                {
+                  "name": "Labyrinth",
+                  "points": null,
+                  "attachment": false
+                },
+                {
+                  "name": "Sacrifice",
+                  "points": null,
+                  "attachment": false
+                },
+                {
+                  "name": "Shroud",
+                  "points": null,
                   "attachment": false
                 }
               ],
@@ -2453,7 +2528,7 @@
           "lists": [
             {
               "name": "A hot barrel serves you as well as the Motherland. Warmth in the cold and dead enemies of the Empress.",
-              "caster": "Behemoth, Spirit of Imperial Khador",
+              "caster": "Kommander Valerii Savaryn",
               "entries": [
                 {
                   "name": "Kommander Valerii Savaryn",
@@ -3366,11 +3441,6 @@
               "caster": "Oriax, The Soul Slaver",
               "entries": [
                 {
-                  "name": "reavers and 3 Ballons walk in to a bar",
-                  "points": 30,
-                  "attachment": false
-                },
-                {
                   "name": "Oriax, The Soul Slaver",
                   "points": null,
                   "attachment": false
@@ -4275,7 +4345,7 @@
           "lists": [
             {
               "name": "Alpha",
-              "caster": "Captain Logan Grindstone",
+              "caster": "General Gunnbjorn",
               "entries": [
                 {
                   "name": "Trapdoor",
@@ -4760,7 +4830,7 @@
           "lists": [
             {
               "name": "The Housing Crisis",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The Child",
               "entries": [
                 {
                   "name": "The Child",
@@ -5401,7 +5471,7 @@
           "lists": [
             {
               "name": "Heretic",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The Heretic",
               "entries": [
                 {
                   "name": "The Heretic",
@@ -5748,7 +5818,7 @@
             },
             {
               "name": "Trapdoor",
-              "caster": "Captain Logan Grindstone",
+              "caster": "Fell Captain Mailis Wroughtmourn",
               "entries": [
                 {
                   "name": "Trapdoor",
@@ -5920,7 +5990,7 @@
           "lists": [
             {
               "name": "Caine",
-              "caster": "Captain Argo Brock",
+              "caster": "Major Allister Caine",
               "entries": [
                 {
                   "name": "Deuce",
@@ -5945,6 +6015,11 @@
                 {
                   "name": "Exulon Nostilla",
                   "points": 20,
+                  "attachment": false
+                },
+                {
+                  "name": "Aberration",
+                  "points": null,
                   "attachment": false
                 },
                 {
@@ -6006,7 +6081,7 @@
             },
             {
               "name": "Captain Connor ‘Boom Boom’ McCoy",
-              "caster": "Captain Argo Brock",
+              "caster": "Captain Connor ‘Boom Boom’ McCoy",
               "entries": [
                 {
                   "name": "Bandit",
@@ -6026,6 +6101,11 @@
                 {
                   "name": "Constance Blaize, Radiance Of Morrow",
                   "points": 20,
+                  "attachment": false
+                },
+                {
+                  "name": "Gallant",
+                  "points": null,
                   "attachment": false
                 },
                 {
@@ -6093,7 +6173,7 @@
           "lists": [
             {
               "name": "You can’t even fit a real list name in here.",
-              "caster": "Constance Blaize, Radiance Of Morrow",
+              "caster": "Captain Buck Hasker",
               "entries": [
                 {
                   "name": "Bandit",
@@ -6108,6 +6188,11 @@
                 {
                   "name": "Constance Blaize, Radiance Of Morrow",
                   "points": 20,
+                  "attachment": false
+                },
+                {
+                  "name": "Gallant",
+                  "points": null,
                   "attachment": false
                 },
                 {
@@ -6164,7 +6249,7 @@
             },
             {
               "name": "Captain Cynthia Rosko",
-              "caster": "Constance Blaize, Radiance Of Morrow",
+              "caster": "Captain Cynthia Rosko",
               "entries": [
                 {
                   "name": "Valiant 1",
@@ -6209,6 +6294,11 @@
                 {
                   "name": "Constance Blaize, Radiance Of Morrow",
                   "points": 20,
+                  "attachment": false
+                },
+                {
+                  "name": "Gallant",
+                  "points": null,
                   "attachment": false
                 },
                 {
@@ -6299,7 +6389,7 @@
           "lists": [
             {
               "name": "You, me and your friend Invictus",
-              "caster": "Nissak, Totem Huntress Champion",
+              "caster": "Lylyth, the Raven Vengeance",
               "entries": [
                 {
                   "name": "Aklyss",
@@ -6314,6 +6404,11 @@
                 {
                   "name": "Magnus the Unstoppable",
                   "points": 20,
+                  "attachment": false
+                },
+                {
+                  "name": "Invictus",
+                  "points": null,
                   "attachment": false
                 },
                 {
@@ -6367,7 +6462,7 @@
             },
             {
               "name": "Rassyk, Spawn of Shadows",
-              "caster": "Bellighul, Master of Pain",
+              "caster": "Rassyk, Spawn of Shadows",
               "entries": [
                 {
                   "name": "Drakyon",
@@ -6589,7 +6684,7 @@
             },
             {
               "name": "King WTC",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The King of Nothing",
               "entries": [
                 {
                   "name": "The King of Nothing",
@@ -7166,7 +7261,7 @@
             },
             {
               "name": "Ashmael, Keeper of Whispers",
-              "caster": "Jylvana, The Tormented",
+              "caster": "Ashmael, Keeper of Whispers",
               "entries": [
                 {
                   "name": "Strygon",
@@ -7221,6 +7316,16 @@
                 {
                   "name": "Lanyssa Ryssyl, Aransor of Vengeance",
                   "points": 18,
+                  "attachment": false
+                },
+                {
+                  "name": "Benkei",
+                  "points": null,
+                  "attachment": false
+                },
+                {
+                  "name": "Sasha",
+                  "points": null,
                   "attachment": false
                 },
                 {
@@ -7905,7 +8010,7 @@
           "lists": [
             {
               "name": "King of the Hill",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The King of Nothing",
               "entries": [
                 {
                   "name": "The King of Nothing",
@@ -8025,7 +8130,7 @@
             },
             {
               "name": "Heretic",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The Heretic",
               "entries": [
                 {
                   "name": "The Heretic",
@@ -8994,11 +9099,6 @@
               "caster": "Kapitan Ekaterina Baranova",
               "entries": [
                 {
-                  "name": "WTC Concrete Mixer",
-                  "points": 2026,
-                  "attachment": false
-                },
-                {
                   "name": "Kapitan Ekaterina Baranova",
                   "points": null,
                   "attachment": false
@@ -9126,11 +9226,6 @@
               "name": "WTC Vile & Cool",
               "caster": "Kapitan Zahara Vilkul",
               "entries": [
-                {
-                  "name": "WTC Vile & Cool",
-                  "points": 2026,
-                  "attachment": false
-                },
                 {
                   "name": "Kapitan Zahara Vilkul",
                   "points": null,
@@ -9496,7 +9591,7 @@
           "lists": [
             {
               "name": "Anomolous Alliteration",
-              "caster": "Exulon Nostilla",
+              "caster": "Sergeant Hulder Craghorn",
               "entries": [
                 {
                   "name": "Trapdoor 1",
@@ -9664,7 +9759,7 @@
             },
             {
               "name": "Uzi Ursine",
-              "caster": "Captain Logan Grindstone",
+              "caster": "General Gunnbjorn",
               "entries": [
                 {
                   "name": "Trapdoor 1",
@@ -11640,7 +11735,7 @@
           "lists": [
             {
               "name": "Two Chickens, a toad and a spider walk into a bar",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The Heretic",
               "entries": [
                 {
                   "name": "The Heretic",
@@ -11859,7 +11954,7 @@
           "lists": [
             {
               "name": "Bohdan's Redshirts",
-              "caster": "Drago, The Beast Unchained",
+              "caster": "Bohdan Lesnoi, Apostle of the Witch",
               "entries": [
                 {
                   "name": "Drago, The Beast Unchained",
@@ -11909,6 +12004,11 @@
                 {
                   "name": "Constance Blaize, Radiance Of Morrow",
                   "points": 20,
+                  "attachment": false
+                },
+                {
+                  "name": "Gallant",
+                  "points": null,
                   "attachment": false
                 },
                 {
@@ -11962,7 +12062,7 @@
             },
             {
               "name": "Kapitan Kazimir Morozov",
-              "caster": "Drago, The Beast Unchained",
+              "caster": "Kapitan Kazimir Morozov",
               "entries": [
                 {
                   "name": "Drago, The Beast Unchained",
@@ -12319,7 +12419,7 @@
           "lists": [
             {
               "name": "The Dark Eternal Night",
-              "caster": "Jylvana, The Tormented",
+              "caster": "Ashmael, Keeper of Whispers",
               "entries": [
                 {
                   "name": "Strygon",
@@ -12382,6 +12482,11 @@
                   "attachment": false
                 },
                 {
+                  "name": "Invictus",
+                  "points": null,
+                  "attachment": false
+                },
+                {
                   "name": "Strygon Rider 1",
                   "points": 8,
                   "attachment": false
@@ -12427,7 +12532,7 @@
             },
             {
               "name": "Auricant Vorsalys",
-              "caster": "Jylvana, The Tormented",
+              "caster": "Auricant Vorsalys",
               "entries": [
                 {
                   "name": "Strygon 1",
@@ -12492,6 +12597,11 @@
                 {
                   "name": "Carver Ultimus",
                   "points": 20,
+                  "attachment": false
+                },
+                {
+                  "name": "War Boar MMD47",
+                  "points": null,
                   "attachment": false
                 },
                 {
@@ -13421,7 +13531,7 @@
           "lists": [
             {
               "name": "Heretic Center for Kids Who Can't Threat Good and Wanna Learn to Do Other Good Stuff Too",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The Heretic",
               "entries": [
                 {
                   "name": "The Heretic",
@@ -13758,7 +13868,7 @@
             },
             {
               "name": "Sepsira",
-              "caster": "Exulon Nostilla",
+              "caster": "Master Necrosurgeon Sepsira",
               "entries": [
                 {
                   "name": "Master Necrosurgeon Sepsira",
@@ -13877,7 +13987,7 @@
           "lists": [
             {
               "name": "And I think it's gonna be a long, long time 'Til touchdown brings me 'round again to find I'm not the man they think I am at home Oh, no, no, no I'm a rocket man Rocket man!",
-              "caster": "And I think it's gonna be a long, long time 'Til touchdown brings me 'round again to find I'm not the man they think I am at home Oh, no, no, no I'm a rocket man Rocket man!",
+              "caster": "Marshal General Baldwin Gearhart",
               "entries": [
                 {
                   "name": "Marshal General Baldwin Gearhart",
@@ -14260,7 +14370,7 @@
             },
             {
               "name": "Warchief Bagadibawm",
-              "caster": "Krueger, Wrath of Blighterghast",
+              "caster": "Warchief Bagadibawm",
               "entries": [
                 {
                   "name": "Warchief Bagadibawm",
@@ -15193,7 +15303,7 @@
             },
             {
               "name": "The Child",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The Child",
               "entries": [
                 {
                   "name": "The Child",
@@ -16139,7 +16249,7 @@
           "lists": [
             {
               "name": "WTC 2026 - Wale",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The King of Nothing",
               "entries": [
                 {
                   "name": "The King of Nothing",
@@ -16988,7 +17098,7 @@
             },
             {
               "name": "Keta und Krawall",
-              "caster": "Krueger, Wrath of Blighterghast",
+              "caster": "Kommander Tatiana Sikora",
               "entries": [
                 {
                   "name": "Kommander Tatiana Sikora",
@@ -17303,7 +17413,7 @@
             },
             {
               "name": "Bjorn to be alive",
-              "caster": "Krueger, Wrath of Blighterghast",
+              "caster": "General Gunnbjorn",
               "entries": [
                 {
                   "name": "Trapdoor 1",
@@ -17445,7 +17555,7 @@
           "lists": [
             {
               "name": "@Spankhammer - dwarf kink on OnlySlams",
-              "caster": "Thunderhead, Heart of the Storm",
+              "caster": "Mechanik Adept Sparkhammer",
               "entries": [
                 {
                   "name": "Drone Servitor",
@@ -18192,7 +18302,7 @@
           "lists": [
             {
               "name": "A.S.Spired Valerii",
-              "caster": "Behemoth, Spirit of Imperial Khador",
+              "caster": "Kommander Valerii Savaryn",
               "entries": [
                 {
                   "name": "Kommander Valerii Savaryn",
@@ -20325,7 +20435,7 @@
           "lists": [
             {
               "name": "Dreaming of Invictus",
-              "caster": "Isaiah, Dread Harvester",
+              "caster": "The Dreamer",
               "entries": [
                 {
                   "name": "The Dreamer",
@@ -21101,7 +21211,7 @@
           "lists": [
             {
               "name": "Call me Ashmael",
-              "caster": "Jylvana, The Tormented",
+              "caster": "Ashmael, Keeper of Whispers",
               "entries": [
                 {
                   "name": "Strygon 1",
@@ -21396,7 +21506,7 @@
           "lists": [
             {
               "name": "Dreamer",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The Dreamer",
               "entries": [
                 {
                   "name": "The Dreamer",
@@ -22072,7 +22182,7 @@
           "lists": [
             {
               "name": "Kingdom of Cards",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The King of Nothing",
               "entries": [
                 {
                   "name": "The King of Nothing",
@@ -22182,7 +22292,7 @@
             },
             {
               "name": "Dethrone",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The Heretic",
               "entries": [
                 {
                   "name": "The Heretic",
@@ -22506,7 +22616,7 @@
           "lists": [
             {
               "name": "[Explicit Advisory Content Warning] 1:15 Track 7, Smoochies, Ashnikko.",
-              "caster": "[Explicit Advisory Content Warning] 1:15 Track 7, Smoochies, Ashnikko.",
+              "caster": "Kommander Tatiana Sikora",
               "entries": [
                 {
                   "name": "Kommander Tatiana Sikora",
@@ -23008,7 +23118,7 @@
           "lists": [
             {
               "name": "chonker dek",
-              "caster": "Exulon Nostilla",
+              "caster": "Lich Lord Dekathus",
               "entries": [
                 {
                   "name": "Lich Lord Dekathus",
@@ -25281,7 +25391,7 @@
           "lists": [
             {
               "name": "Dread Zeppelin",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The Heretic",
               "entries": [
                 {
                   "name": "The Heretic",
@@ -25391,7 +25501,7 @@
             },
             {
               "name": "The Child",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The Child",
               "entries": [
                 {
                   "name": "The Child",
@@ -25517,7 +25627,7 @@
           "lists": [
             {
               "name": "The Anti-GOAT",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The Heretic",
               "entries": [
                 {
                   "name": "The Heretic",
@@ -25622,7 +25732,7 @@
             },
             {
               "name": "Valhalla's Gate",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The Child",
               "entries": [
                 {
                   "name": "The Child",
@@ -26306,7 +26416,7 @@
           "lists": [
             {
               "name": "Three Cultists and the frog they summoned",
-              "caster": "Captain Logan Grindstone",
+              "caster": "General Gunnbjorn",
               "entries": [
                 {
                   "name": "Trapdoor 1",
@@ -27183,7 +27293,7 @@
           "lists": [
             {
               "name": "This is what I play when I don’t want to use my brain (because I’ve turned it off with alcohol).",
-              "caster": "Isaiah, Dread Harvester",
+              "caster": "The Heretic",
               "entries": [
                 {
                   "name": "The Heretic",
@@ -29821,7 +29931,7 @@
             },
             {
               "name": "Child",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The Child",
               "entries": [
                 {
                   "name": "The Child",
@@ -29912,11 +30022,6 @@
               "name": "Boomhowler WTC 2026",
               "caster": "Admiral Boomhowler",
               "entries": [
-                {
-                  "name": "09 09 Boomhowler",
-                  "points": 2026,
-                  "attachment": false
-                },
                 {
                   "name": "Admiral Boomhowler",
                   "points": null,
@@ -30035,11 +30140,6 @@
               "name": "09 09 Firequill",
               "caster": "Captain Firequill",
               "entries": [
-                {
-                  "name": "09 09 Firequill",
-                  "points": 2026,
-                  "attachment": false
-                },
                 {
                   "name": "Captain Firequill",
                   "points": null,
@@ -30535,7 +30635,7 @@
           "lists": [
             {
               "name": "Dragozov",
-              "caster": "Drago, The Beast Unchained",
+              "caster": "Kapitan Kazimir Morozov",
               "entries": [
                 {
                   "name": "Drago, The Beast Unchained",
@@ -31985,7 +32085,7 @@
           "lists": [
             {
               "name": "Child",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The Child",
               "entries": [
                 {
                   "name": "The Child",
@@ -32098,7 +32198,7 @@
             },
             {
               "name": "Grymkin - Grymkin",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The Heretic",
               "entries": [
                 {
                   "name": "The Heretic",
@@ -34534,7 +34634,7 @@
           "lists": [
             {
               "name": "This next song is for Jimbo. \"aaaaaannnnnd after allllll, here's Wanderer with a walllll\"",
-              "caster": "Isaiah, Dread Harvester",
+              "caster": "The Wanderer",
               "entries": [
                 {
                   "name": "The Wanderer",
@@ -34866,7 +34966,7 @@
             },
             {
               "name": "Why dont you come on over…",
-              "caster": "Constance Blaize, Radiance Of Morrow",
+              "caster": "Kommander Valerii Savaryn",
               "entries": [
                 {
                   "name": "Kommander Valerii Savaryn",
@@ -34978,7 +35078,7 @@
           "lists": [
             {
               "name": "Hail to the King",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The King of Nothing",
               "entries": [
                 {
                   "name": "The King of Nothing",
@@ -35093,7 +35193,7 @@
             },
             {
               "name": "The Child",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The Child",
               "entries": [
                 {
                   "name": "The Child",
@@ -36709,7 +36809,7 @@
           "lists": [
             {
               "name": "Oh how the life change",
-              "caster": "Captain Logan Grindstone",
+              "caster": "General Gunnbjorn",
               "entries": [
                 {
                   "name": "General Gunnbjorn",
@@ -36898,7 +36998,7 @@
             },
             {
               "name": "Trapdoor",
-              "caster": "Captain Logan Grindstone",
+              "caster": "Sergeant Hulder Craghorn",
               "entries": [
                 {
                   "name": "Trapdoor",
@@ -37067,7 +37167,7 @@
           "lists": [
             {
               "name": "WTC26 Tatiaana",
-              "caster": "Behemoth, Spirit of Imperial Khador",
+              "caster": "Kommander Tatiana Sikora",
               "entries": [
                 {
                   "name": "Kommander Tatiana Sikora",
@@ -37322,7 +37422,7 @@
           "lists": [
             {
               "name": "WTC 1 - Lapsi",
-              "caster": "Isaiah, Dread Harvester",
+              "caster": "The Child",
               "entries": [
                 {
                   "name": "The Child",
@@ -38847,7 +38947,7 @@
             },
             {
               "name": "Admiral Boomhowler",
-              "caster": "Krueger, Wrath of Blighterghast",
+              "caster": "Admiral Boomhowler",
               "entries": [
                 {
                   "name": "Admiral Boomhowler",
@@ -41660,7 +41760,7 @@
             },
             {
               "name": "Trapdoor 1",
-              "caster": "Captain Logan Grindstone",
+              "caster": "General Gunnbjorn",
               "entries": [
                 {
                   "name": "Trapdoor 1",
@@ -43137,7 +43237,7 @@
             },
             {
               "name": "The King",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The King of Nothing",
               "entries": [
                 {
                   "name": "The King of Nothing",
@@ -43676,7 +43776,7 @@
           "lists": [
             {
               "name": "DADDY",
-              "caster": "Constance Blaize, Radiance Of Morrow",
+              "caster": "Major Allister Caine",
               "entries": [
                 {
                   "name": "Bandit",
@@ -43691,6 +43791,11 @@
                 {
                   "name": "Constance Blaize, Radiance Of Morrow",
                   "points": 20,
+                  "attachment": false
+                },
+                {
+                  "name": "Gallant",
+                  "points": null,
                   "attachment": false
                 },
                 {
@@ -43747,7 +43852,7 @@
             },
             {
               "name": "Captain Connor ‘Boom Boom’ McCoy",
-              "caster": "Captain Argo Brock",
+              "caster": "Captain Connor ‘Boom Boom’ McCoy",
               "entries": [
                 {
                   "name": "Bandit",
@@ -44237,7 +44342,7 @@
             },
             {
               "name": "Master Necrosurgeon Sepsira",
-              "caster": "Constance Blaize, Radiance Of Morrow",
+              "caster": "Master Necrosurgeon Sepsira",
               "entries": [
                 {
                   "name": "Master Necrosurgeon Sepsira",
@@ -44442,7 +44547,7 @@
             },
             {
               "name": "S&D 1.3",
-              "caster": "Constance Blaize, Radiance Of Morrow",
+              "caster": "Sturm & Drang",
               "entries": [
                 {
                   "name": "Sturm & Drang",
@@ -45240,7 +45345,7 @@
             },
             {
               "name": "Zoning Board",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The Child",
               "entries": [
                 {
                   "name": "The Child",
@@ -45484,7 +45589,7 @@
             },
             {
               "name": "\"Sparky doesnt know...\"",
-              "caster": "Captain Bastian Falk",
+              "caster": "Mechanik Adept Sparkhammer",
               "entries": [
                 {
                   "name": "Mechanik Adept Sparkhammer",
@@ -45954,7 +46059,7 @@
             },
             {
               "name": "Drake pig",
-              "caster": "Rhupert Carvolo, Piper of Ord",
+              "caster": "Drake MacBain",
               "entries": [
                 {
                   "name": "Drake MacBain",
@@ -46071,7 +46176,7 @@
           "lists": [
             {
               "name": "Morty3 1 Copy",
-              "caster": "Deathjack, Dark Apotheosis",
+              "caster": "Mortenebra Perfected",
               "entries": [
                 {
                   "name": "Mortenebra Perfected",
@@ -46199,7 +46304,7 @@
             },
             {
               "name": "Decathus 2 Hellraker",
-              "caster": "Deathjack, Dark Apotheosis",
+              "caster": "Lich Lord Dekathus",
               "entries": [
                 {
                   "name": "Lich Lord Dekathus",
@@ -47752,7 +47857,7 @@
             },
             {
               "name": "Who you gonna call ? Mailis !",
-              "caster": "Constance Blaize, Radiance Of Morrow",
+              "caster": "Fell Captain Mailis Wroughtmourn",
               "entries": [
                 {
                   "name": "Fell Captain Mailis Wroughtmourn",
@@ -49595,7 +49700,7 @@
           "lists": [
             {
               "name": "Rhulic Doc Brown",
-              "caster": "Constance Blaize, Radiance Of Morrow",
+              "caster": "Mechanik Adept Sparkhammer",
               "entries": [
                 {
                   "name": "Mechanik Adept Sparkhammer",
@@ -50890,7 +50995,7 @@
             },
             {
               "name": "Grand Exemplar Kreoss",
-              "caster": "Constance Blaize, Radiance Of Morrow",
+              "caster": "Grand Exemplar Kreoss",
               "entries": [
                 {
                   "name": "Grand Exemplar Kreoss",
@@ -51385,7 +51490,7 @@
             },
             {
               "name": "Bite my shiny metal Sikora",
-              "caster": "Behemoth, Spirit of Imperial Khador",
+              "caster": "Kommander Tatiana Sikora",
               "entries": [
                 {
                   "name": "Kommander Tatiana Sikora",
@@ -51599,7 +51704,7 @@
             },
             {
               "name": "The Child",
-              "caster": "Isaiah, Dread Harvester",
+              "caster": "The Child",
               "entries": [
                 {
                   "name": "The Child",
@@ -51688,7 +51793,7 @@
           "lists": [
             {
               "name": "Bagadi Heavy Metal",
-              "caster": "Alexia, Queen of the Damned",
+              "caster": "Warchief Bagadibawm",
               "entries": [
                 {
                   "name": "Warchief Bagadibawm",
@@ -51801,7 +51906,7 @@
             },
             {
               "name": "Gunny all the big",
-              "caster": "Captain Logan Grindstone",
+              "caster": "General Gunnbjorn",
               "entries": [
                 {
                   "name": "Trapdoor 1",
@@ -51943,7 +52048,7 @@
           "lists": [
             {
               "name": "To die by your side is such a heavenly way to die.",
-              "caster": "Constance Blaize, Radiance Of Morrow",
+              "caster": "Captain Damiano",
               "entries": [
                 {
                   "name": "Mule",
@@ -51968,6 +52073,11 @@
                 {
                   "name": "Constance Blaize, Radiance Of Morrow",
                   "points": 20,
+                  "attachment": false
+                },
+                {
+                  "name": "Gallant",
+                  "points": null,
                   "attachment": false
                 },
                 {
@@ -52637,7 +52747,7 @@
             },
             {
               "name": "Kommander Tatiana Sikora",
-              "caster": "Krueger, Wrath of Blighterghast",
+              "caster": "Kommander Tatiana Sikora",
               "entries": [
                 {
                   "name": "Kommander Tatiana Sikora",
@@ -52955,7 +53065,7 @@
             },
             {
               "name": "Sparky and the Bandit 13",
-              "caster": "Blocker",
+              "caster": "Mechanik Adept Sparkhammer",
               "entries": [
                 {
                   "name": "Heavy Weapon Crate",
@@ -53763,7 +53873,7 @@
             },
             {
               "name": "Gunnbjorn WTC",
-              "caster": "Captain Logan Grindstone",
+              "caster": "General Gunnbjorn",
               "entries": [
                 {
                   "name": "Trapdoor 1",
@@ -54681,7 +54791,7 @@
           "lists": [
             {
               "name": "Elixirwork",
-              "caster": "Constance Blaize, Radiance Of Morrow",
+              "caster": "Aurum Legate Lukas di Morray",
               "entries": [
                 {
                   "name": "Aurum Legate Lukas di Morray",
@@ -55351,7 +55461,7 @@
             },
             {
               "name": "Mechanic Adept Sparkhammer",
-              "caster": "Captain Bastian Falk",
+              "caster": "Mechanic Adept Sparkhammer",
               "entries": [
                 {
                   "name": "Mechanic Adept Sparkhammer",
@@ -55876,7 +55986,7 @@
             },
             {
               "name": "Maggletrapp",
-              "caster": "Constance Blaize, Radiance Of Morrow",
+              "caster": "Magnus the Warlord",
               "entries": [
                 {
                   "name": "Magnus the Warlord",
@@ -58583,7 +58693,7 @@
           "lists": [
             {
               "name": "dekanthus morrow converted",
-              "caster": "Constance Blaize, Radiance Of Morrow",
+              "caster": "Lich Lord Dekathus",
               "entries": [
                 {
                   "name": "Lich Lord Dekathus",
@@ -58676,7 +58786,7 @@
             },
             {
               "name": "Nekane dark cultist",
-              "caster": "Deathjack, Dark Apotheosis",
+              "caster": "Wraithbinder Nekane",
               "entries": [
                 {
                   "name": "Wraithbinder Nekane",
@@ -58800,7 +58910,7 @@
           "lists": [
             {
               "name": "Now you see me, now you dont!",
-              "caster": "Baron Tonguelick, Lord of Warts",
+              "caster": "The King of Nothing",
               "entries": [
                 {
                   "name": "The King of Nothing",
@@ -59137,7 +59247,7 @@
             },
             {
               "name": "tatiana skew",
-              "caster": "Alexia, Queen of the Damned",
+              "caster": "Kommander Tatiana Sikora",
               "entries": [
                 {
                   "name": "Kommander Tatiana Sikora",
@@ -59279,7 +59389,7 @@
           "lists": [
             {
               "name": "We didn’t start the fire!",
-              "caster": "Captain Logan Grindstone",
+              "caster": "Warchief Bagadibawm",
               "entries": [
                 {
                   "name": "Trapdoor",
@@ -59442,7 +59552,7 @@
             },
             {
               "name": "There’s always a bigger troll",
-              "caster": "Captain Logan Grindstone",
+              "caster": "General Gunnbjorn",
               "entries": [
                 {
                   "name": "Trapdoor",
@@ -60860,7 +60970,7 @@
             },
             {
               "name": "Pecorino & Gunpowder",
-              "caster": "Behemoth, Spirit of Imperial Khador",
+              "caster": "Kommander Valerii Savaryn",
               "entries": [
                 {
                   "name": "Kommander Valerii Savaryn",
@@ -61217,7 +61327,7 @@
           "lists": [
             {
               "name": "Bagady Bonk",
-              "caster": "Krueger, Wrath of Blighterghast",
+              "caster": "Warchief Bagadibawm",
               "entries": [
                 {
                   "name": "Warchief Bagadibawm",
