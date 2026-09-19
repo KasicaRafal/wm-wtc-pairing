@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random stats — WTC Pairings 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="static/style.css?v=21">
+</head>
+<body class="stats-page">
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">WTC</span>
+      <div>
+        <h1>Pairing Planner 2026</h1>
+        <p>Random stats</p>
+      </div>
+    </a>
+    <div class="topbar-end">
+      <a class="support-btn" href="https://ko-fi.com/kasi_r" target="_blank" rel="noopener noreferrer">Support development</a>
+      <a class="tab" href="index.html">Back to the app</a>
+    </div>
+  </header>
+
+  <main class="stats-main">
+    <header class="stats-hero">
+      <p class="eyebrow">Field snapshot</p>
+      <h2>Random stats</h2>
+      <div id="stats-kpis" class="pair-summary"></div>
+    </header>
+
+    <section class="stats-card">
+      <h3>Specific armies</h3>
+      <p class="hint">Players, not lists. Almost everyone brought two lists, so list counts are roughly double.</p>
+      <div id="chart-armies"></div>
+    </section>
+
+    <section class="stats-card">
+      <h3>Super Juniors</h3>
+      <div id="chart-juniors"></div>
+      <div class="stats-split">
+        <label class="field">
+          <span>Taken inside</span>
+          <select id="junior-pack"></select>
+        </label>
+        <div id="chart-junior-hosts"></div>
+      </div>
+    </section>
+
+    <section class="stats-card">
+      <h3>Caster share by army</h3>
+      <p class="hint">How the lists in one army split across warcasters.</p>
+      <label class="field">
+        <span>Army</span>
+        <select id="caster-army"></select>
+      </label>
+      <div id="chart-casters"></div>
+    </section>
+
+    <section class="stats-card">
+      <h3>Most played warcasters</h3>
+      <p class="hint">Across the whole field, by number of lists.</p>
+      <div id="chart-top-casters"></div>
+    </section>
+
+    <section class="stats-card">
+      <h3>Most common two-list pairs</h3>
+      <p class="hint">Players who submitted two lists.</p>
+      <div id="chart-pairs"></div>
+    </section>
+  </main>
+
+  <footer class="about-footer">
+    <p>Team and list data is a snapshot from <a href="https://warmachine.longshanks.org/event/37180/" target="_blank" rel="noopener noreferrer">Longshanks event 37180</a> for WTC 2026. Names and lists may be incomplete, outdated, or mis-parsed.</p>
+    <p><a href="index.html">Back to the app</a> · <a href="privacy.html">Privacy Policy</a></p>
+  </footer>
+
+  <script src="static/stats.js?v=2"></script>
+</body>
+</html>

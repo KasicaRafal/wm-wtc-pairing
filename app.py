@@ -23,3 +23,8 @@ async def index():
 @app.get("/privacy.html")
 async def privacy():
     return FileResponse(APP_DIR / "privacy.html")
+
+
+@app.get("/stats.html")
+async def stats():
+    return FileResponse(APP_DIR / "stats.html")
