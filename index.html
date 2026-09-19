@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="static/style.css?v=12">
+  <link rel="stylesheet" href="static/style.css?v=16">
 </head>
 <body>
   <header class="topbar">
@@ -18,10 +18,13 @@
         <p>Matchup ratings and optimal 5v5 pairings</p>
       </div>
     </div>
-    <nav class="tabs" role="tablist">
-      <button type="button" class="tab active" data-tab="rate" role="tab" aria-selected="true">1. Ratings</button>
-      <button type="button" class="tab" data-tab="pair" role="tab" aria-selected="false">2. Pairings</button>
-    </nav>
+    <div class="topbar-end">
+      <nav class="tabs" role="tablist">
+        <button type="button" class="tab active" data-tab="rate" role="tab" aria-selected="true">1. Ratings</button>
+        <button type="button" class="tab" data-tab="pair" role="tab" aria-selected="false">2. Pairings</button>
+      </nav>
+      <a class="support-btn" href="https://ko-fi.com/kasi_r" target="_blank" rel="noopener noreferrer">Support development</a>
+    </div>
   </header>
 
   <main>
@@ -111,6 +114,17 @@
       <div id="pair-results" class="pair-results" hidden></div>
     </section>
   </main>
+
+  <footer class="about-footer">
+    <p><strong>WTC Pairing Planner</strong> is a free fan-made tool for Warmachine World Team Championship pairings.</p>
+    <p>Rate your matchups, export JSON for your teammates, import all five files, and compute 5v5 pairings — maximize total score or avoid the worst tables.</p>
+    <p>Ratings and pairing math run entirely in your browser. We do not collect your scores. Exports are files you choose to share. <a href="privacy.html">Privacy Policy</a></p>
+    <p>Every feature is unlocked for everyone. If the app helps you and you would like to support development, an optional tip is always appreciated (and never required). <a href="https://ko-fi.com/kasi_r" target="_blank" rel="noopener noreferrer">Support development on Ko-fi</a></p>
+    <details>
+      <summary>Disclaimer</summary>
+      <p>Warmachine is a trademark of Steamforged Games Ltd., originally created by Privateer Press. World Team Championship (WTC) is an independently organized event. This unofficial fan-made tool is not affiliated with, endorsed by, sponsored by, or connected to Steamforged Games, Privateer Press, or the WTC organizers in any way. All trademarks and copyrights related to Warmachine are the property of their respective owners.</p>
+    </details>
+  </footer>
 
   <div class="modal" id="lists-modal" hidden>
     <div class="modal-backdrop" id="lists-backdrop"></div>

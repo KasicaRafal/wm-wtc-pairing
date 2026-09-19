@@ -18,3 +18,8 @@ if (APP_DIR / "samples").is_dir():
 @app.get("/")
 async def index():
     return FileResponse(APP_DIR / "index.html")
+
+
+@app.get("/privacy.html")
+async def privacy():
+    return FileResponse(APP_DIR / "privacy.html")
