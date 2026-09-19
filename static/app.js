@@ -558,11 +558,11 @@ async function addPairFiles(fileList) {
 }
 
 const EXAMPLE_PAIR_FILES = [
-  "examples/austria-goschnbrecha/wtc-ratings-Austria_Goschnbrecha-Snot123.json",
-  "examples/austria-goschnbrecha/wtc-ratings-Austria_Goschnbrecha-Lorand_xor.json",
-  "examples/austria-goschnbrecha/wtc-ratings-Austria_Goschnbrecha-krjugamer.json",
-  "examples/austria-goschnbrecha/wtc-ratings-Austria_Goschnbrecha-GeraldP83.json",
-  "examples/austria-goschnbrecha/wtc-ratings-Austria_Goschnbrecha-Goathead.json",
+  "examples/austria-goschnbrecha/wtc-ratings-Austria_Goschnbrecha-Snot123.json?v=2",
+  "examples/austria-goschnbrecha/wtc-ratings-Austria_Goschnbrecha-Lorand_xor.json?v=2",
+  "examples/austria-goschnbrecha/wtc-ratings-Austria_Goschnbrecha-krjugamer.json?v=2",
+  "examples/austria-goschnbrecha/wtc-ratings-Austria_Goschnbrecha-GeraldP83.json?v=2",
+  "examples/austria-goschnbrecha/wtc-ratings-Austria_Goschnbrecha-Goathead.json?v=2",
 ];
 
 async function loadExamplePairings() {
