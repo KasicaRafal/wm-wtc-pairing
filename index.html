@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="static/style.css?v=22">
+  <link rel="stylesheet" href="static/style.css?v=26">
 </head>
 <body>
   <header class="topbar">
@@ -95,6 +95,10 @@
 
     <section id="tab-pair" class="tab-panel" hidden>
       <div class="pair-setup">
+        <div class="example-banner">
+          <p><span class="eyebrow">Example</span> Sample ratings for Austria Goschnbrecha. After Generate, switch Maximize vs Avoid the worst to see different pairings.</p>
+          <button type="button" class="btn ghost compact" id="load-example">Load example</button>
+        </div>
         <div>
           <h2>Import team ratings</h2>
           <p class="hint">Drop the exports from all 5 players on the same team. We’ll compute the best pairings against every other team and summarize table load, coverage, and army profiles.</p>
@@ -103,7 +107,10 @@
           <input type="file" id="pair-files" accept=".json,application/json" multiple hidden>
           <p>Drop 5 JSON files here, or <button type="button" class="link-btn" id="pair-browse">browse files</button></p>
         </div>
-        <div id="pair-imports" class="import-chips"></div>
+        <div class="import-row">
+          <div id="pair-imports" class="import-chips"></div>
+          <button type="button" class="btn ghost" id="clear-imports" disabled>Clear files</button>
+        </div>
         <div class="pair-controls">
           <fieldset class="mode-field">
             <legend>Optimization goal</legend>
@@ -141,6 +148,6 @@
     </div>
   </div>
 
-  <script src="static/app.js?v=16"></script>
+  <script src="static/app.js?v=19"></script>
 </body>
 </html>

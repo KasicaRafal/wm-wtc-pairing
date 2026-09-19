@@ -45,7 +45,9 @@ const els = {
   pairFiles: document.getElementById("pair-files"),
   pairBrowse: document.getElementById("pair-browse"),
   pairImports: document.getElementById("pair-imports"),
+  clearImports: document.getElementById("clear-imports"),
   generateBtn: document.getElementById("generate-btn"),
+  loadExample: document.getElementById("load-example"),
   exportPairings: document.getElementById("export-pairings"),
   exportStats: document.getElementById("export-stats"),
   pairResults: document.getElementById("pair-results"),
@@ -503,32 +505,79 @@ function renderPairImports() {
     </span>
   `).join("");
   els.generateBtn.disabled = state.pairFiles.length !== 5;
+  if (els.clearImports) els.clearImports.disabled = state.pairFiles.length === 0;
+}
+
+function clearPairResults() {
+  state.pairResults = null;
+  state.pairQuery = "";
+  state.reportsOpen = false;
+  if (els.exportPairings) els.exportPairings.hidden = true;
+  if (els.exportStats) els.exportStats.hidden = true;
+  if (els.pairResults) {
+    els.pairResults.hidden = true;
+    els.pairResults.innerHTML = "";
+  }
+}
+
+function resetPairImports() {
+  state.pairFiles = [];
+  if (els.pairFiles) els.pairFiles.value = "";
+  clearPairResults();
+  renderPairImports();
+}
+
+function importPairPayload(data, label = "file") {
+  if (data.type !== EXPORT_TYPE) throw new Error(`${label}: invalid format.`);
+  if (state.pairFiles.some((f) => f.playerId === data.playerId || f.player === data.player)) {
+    throw new Error(`${data.player} is already imported.`);
+  }
+  if (state.pairFiles.length && state.pairFiles[0].teamId !== data.teamId && state.pairFiles[0].team !== data.team) {
+    throw new Error("All exports must come from the same team.");
+  }
+  const normalized = normalizeRatingSets(data.ratings, data.listRatings, data.version);
+  state.pairFiles.push({
+    ...data,
+    version: EXPORT_VERSION,
+    ratings: normalized.ratings,
+    listRatings: normalized.listRatings,
+  });
 }
 
 async function addPairFiles(fileList) {
   for (const file of fileList) {
     try {
-      const data = await readJsonFile(file);
-      if (data.type !== EXPORT_TYPE) throw new Error(`${file.name}: invalid format.`);
-      if (state.pairFiles.some((f) => f.playerId === data.playerId || f.player === data.player)) {
-        throw new Error(`${data.player} is already imported.`);
-      }
-      if (state.pairFiles.length && state.pairFiles[0].teamId !== data.teamId && state.pairFiles[0].team !== data.team) {
-        throw new Error("All exports must come from the same team.");
-      }
-      const normalized = normalizeRatingSets(data.ratings, data.listRatings, data.version);
-      state.pairFiles.push({
-        ...data,
-        version: EXPORT_VERSION,
-        ratings: normalized.ratings,
-        listRatings: normalized.listRatings,
-      });
+      importPairPayload(await readJsonFile(file), file.name);
     } catch (err) {
       toast(err.message);
     }
   }
   if (state.pairFiles.length > 5) state.pairFiles = state.pairFiles.slice(0, 5);
+  clearPairResults();
   renderPairImports();
+}
+
+const EXAMPLE_PAIR_FILES = [
+  "examples/austria-goschnbrecha/wtc-ratings-Austria_Goschnbrecha-Snot123.json",
+  "examples/austria-goschnbrecha/wtc-ratings-Austria_Goschnbrecha-Lorand_xor.json",
+  "examples/austria-goschnbrecha/wtc-ratings-Austria_Goschnbrecha-krjugamer.json",
+  "examples/austria-goschnbrecha/wtc-ratings-Austria_Goschnbrecha-GeraldP83.json",
+  "examples/austria-goschnbrecha/wtc-ratings-Austria_Goschnbrecha-Goathead.json",
+];
+
+async function loadExamplePairings() {
+  try {
+    resetPairImports();
+    for (const path of EXAMPLE_PAIR_FILES) {
+      const res = await fetch(path);
+      if (!res.ok) throw new Error("Could not load the example files.");
+      importPairPayload(await res.json(), path);
+    }
+    renderPairImports();
+    toast("Loaded example ratings for Austria Goschnbrecha.");
+  } catch (err) {
+    toast(err.message);
+  }
 }
 
 function permutations(arr) {
@@ -1196,6 +1245,7 @@ function bindEvents() {
     const btn = e.target.closest("[data-remove]");
     if (!btn) return;
     state.pairFiles.splice(Number(btn.dataset.remove), 1);
+    clearPairResults();
     renderPairImports();
   });
   document.querySelectorAll('input[name="pair-mode"]').forEach((radio) => {
@@ -1205,6 +1255,11 @@ function bindEvents() {
     });
   });
   els.generateBtn.addEventListener("click", generatePairings);
+  els.loadExample.addEventListener("click", loadExamplePairings);
+  els.clearImports.addEventListener("click", () => {
+    resetPairImports();
+    toast("Cleared imported files.");
+  });
   els.exportPairings.addEventListener("click", exportPairingsCsv);
   els.exportStats.addEventListener("click", exportStatsCsv);
   els.pairResults.addEventListener("click", (e) => {

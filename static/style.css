@@ -466,6 +466,36 @@ select:focus, input:focus, .score-btn:focus-visible, .btn:focus-visible, .team-i
 .pair-setup { padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
 .pair-setup h2 { font-size: 1.7rem; }
 
+.example-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px dashed var(--brass);
+  border-radius: 8px;
+  background: #2c2612;
+}
+.example-banner p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+.example-banner .eyebrow {
+  display: inline;
+  margin: 0 0.45rem 0 0;
+  color: var(--brass);
+}
+
+.btn.compact {
+  padding: 0.22rem 0.55rem;
+  font-size: 0.78rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 .drop-zone {
   border: 2px dashed var(--line);
   border-radius: 10px;
@@ -475,7 +505,15 @@ select:focus, input:focus, .score-btn:focus-visible, .btn:focus-visible, .team-i
 }
 .drop-zone.dragover { border-color: var(--brass); background: #241d12; }
 
-.import-chips { display: flex; flex-wrap: wrap; gap: 0.45rem; min-height: 1.5rem; }
+.import-chips { display: flex; flex-wrap: wrap; gap: 0.45rem; min-height: 1.5rem; flex: 1; }
+
+.import-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
 
 .import-chip {
   display: flex;
@@ -507,6 +545,7 @@ select:focus, input:focus, .score-btn:focus-visible, .btn:focus-visible, .team-i
 .mode-field legend { padding: 0 0.3rem; color: var(--muted); font-size: 0.75rem; }
 
 .pair-results { display: flex; flex-direction: column; gap: 0.8rem; }
+.pair-results[hidden] { display: none !important; }
 
 .pair-summary {
   display: grid;
