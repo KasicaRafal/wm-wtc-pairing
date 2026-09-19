@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="static/style.css?v=26">
+  <link rel="stylesheet" href="static/style.css?v=27">
 </head>
 <body>
   <header class="topbar">
@@ -113,9 +113,10 @@
         </div>
         <div class="pair-controls">
           <fieldset class="mode-field">
-            <legend>Optimization goal</legend>
+            <legend>Pairing mode</legend>
             <label><input type="radio" name="pair-mode" value="sum" checked> Maximize total score</label>
             <label><input type="radio" name="pair-mode" value="min"> Avoid the worst matchups</label>
+            <label><input type="radio" name="pair-mode" value="manual"> Manual pairings</label>
           </fieldset>
           <button type="button" class="btn primary" id="generate-btn" disabled>Generate pairings</button>
           <button type="button" class="btn ghost" id="export-pairings" hidden>Export results CSV</button>
@@ -148,6 +149,6 @@
     </div>
   </div>
 
-  <script src="static/app.js?v=20"></script>
+  <script src="static/app.js?v=21"></script>
 </body>
 </html>

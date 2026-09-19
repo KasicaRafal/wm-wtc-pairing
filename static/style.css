@@ -540,7 +540,8 @@ select:focus, input:focus, .score-btn:focus-visible, .btn:focus-visible, .team-i
   border-radius: 10px;
   padding: 0.55rem 0.8rem;
   display: flex;
-  gap: 1rem;
+  flex-wrap: wrap;
+  gap: 0.45rem 1rem;
 }
 .mode-field legend { padding: 0 0.3rem; color: var(--muted); font-size: 0.75rem; }
 
@@ -756,6 +757,22 @@ select:focus, input:focus, .score-btn:focus-visible, .btn:focus-visible, .team-i
   display: inline;
   text-align: left;
   overflow-wrap: anywhere;
+}
+.pair-opp-select {
+  width: 100%;
+  max-width: 24rem;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.28rem 0.45rem;
+  font: inherit;
+}
+.pair-card.is-manual .matrix td[data-assign-opp] {
+  cursor: pointer;
+}
+.pair-card.is-manual .matrix td[data-assign-opp]:hover {
+  filter: brightness(1.12);
 }
 .pair-sub {
   color: var(--muted);

@@ -17,9 +17,11 @@ const state = {
   teamQuery: "",
   pairFiles: [],
   pairMode: "sum",
+  lastAutoMode: "sum",
   pairResults: null,
   pairQuery: "",
   reportsOpen: false,
+  openMatrices: new Set(),
 };
 
 const els = {
@@ -512,6 +514,7 @@ function clearPairResults() {
   state.pairResults = null;
   state.pairQuery = "";
   state.reportsOpen = false;
+  state.openMatrices = new Set();
   if (els.exportPairings) els.exportPairings.hidden = true;
   if (els.exportStats) els.exportStats.hidden = true;
   if (els.pairResults) {
@@ -771,6 +774,57 @@ function armyTipHtml(rows) {
     </div>`;
 }
 
+function optimizerMode() {
+  return state.pairMode === "manual" ? (state.lastAutoMode || "sum") : state.pairMode;
+}
+
+function scoredAssignment(matrix, perm) {
+  const scores = perm.map((j, i) => matrix[i][j]);
+  return {
+    perm: perm.slice(),
+    scores,
+    sum: scores.reduce((a, b) => a + b, 0),
+    min: Math.min(...scores),
+  };
+}
+
+function buildPairResult(ours, opp, pick) {
+  const details = ours.map((me) => opp.players.map((them) => scoreDetail(me, them.id)));
+  const matrix = details.map((row) => row.map((d) => d.score));
+  const best = pick
+    ? scoredAssignment(matrix, pick)
+    : bestAssignment(matrix, optimizerMode());
+  const lines = best.perm.map((j, i) => {
+    const themPlayer = opp.players[j];
+    const usPlayer = playerById(ours[i].playerId)?.player;
+    const detail = details[i][j];
+    return {
+      us: ours[i].player,
+      usId: ours[i].playerId,
+      usFaction: ours[i].faction,
+      usLists: pairingListLines(usPlayer, detail.listKey),
+      them: themPlayer.name,
+      themId: themPlayer.id,
+      themFaction: themPlayer.faction,
+      score: best.scores[i],
+      missing: detail.missing,
+    };
+  });
+  return {
+    id: opp.id,
+    team: opp.name,
+    region: opp.region,
+    sum: best.sum,
+    min: best.min,
+    avg: best.sum / 5,
+    lines,
+    matrix,
+    ours: ours.map((p) => p.player),
+    them: opp.players.map((p) => p.name),
+    pick: best.perm.slice(),
+  };
+}
+
 function generatePairings() {
   if (state.pairFiles.length !== 5) {
     toast("Exactly 5 player exports are required.");
@@ -785,42 +839,10 @@ function generatePairings() {
 
   const ours = state.pairFiles;
   const opps = state.teams.filter((t) => t.id !== ourTeam.id);
-  const results = opps.map((opp) => {
-    const details = ours.map((me) => opp.players.map((them) => scoreDetail(me, them.id)));
-    const matrix = details.map((row) => row.map((d) => d.score));
-    const best = bestAssignment(matrix, state.pairMode);
-    const lines = best.perm.map((j, i) => {
-      const themPlayer = opp.players[j];
-      const usPlayer = playerById(ours[i].playerId)?.player;
-      const detail = details[i][j];
-      return {
-        us: ours[i].player,
-        usId: ours[i].playerId,
-        usFaction: ours[i].faction,
-        usLists: pairingListLines(usPlayer, detail.listKey),
-        them: themPlayer.name,
-        themId: themPlayer.id,
-        themFaction: themPlayer.faction,
-        score: best.scores[i],
-        missing: detail.missing,
-      };
-    });
-    return {
-      team: opp.name,
-      region: opp.region,
-      sum: best.sum,
-      min: best.min,
-      avg: best.sum / 5,
-      lines,
-      matrix,
-      ours: ours.map((p) => p.player),
-      them: opp.players.map((p) => p.name),
-      pick: best.perm,
-    };
-  });
-
+  const results = opps.map((opp) => buildPairResult(ours, opp));
   results.sort((a, b) => a.sum - b.sum);
   state.reportsOpen = false;
+  state.openMatrices = new Set();
   state.pairResults = {
     ourTeam: ourTeam.name,
     ourTeamId: ourTeam.id,
@@ -830,6 +852,48 @@ function generatePairings() {
   renderPairResults();
   els.exportPairings.hidden = false;
   if (els.exportStats) els.exportStats.hidden = false;
+}
+
+function refreshPairReports() {
+  const data = state.pairResults;
+  if (!data) return;
+  const ourTeam = teamById(data.ourTeamId) || state.teams.find((t) => t.name === data.ourTeam);
+  if (!ourTeam) return;
+  data.reports = buildPairReports(ourTeam, state.pairFiles, data.results);
+}
+
+function swapPairing(oppId, row, col) {
+  if (state.pairMode !== "manual" || !state.pairResults) return;
+  const result = state.pairResults.results.find((r) => r.id === oppId);
+  const opp = teamById(oppId);
+  if (!result || !opp) return;
+  const from = result.pick[row];
+  if (from === col) return;
+  const other = result.pick.indexOf(col);
+  const pick = result.pick.slice();
+  pick[row] = col;
+  if (other >= 0) pick[other] = from;
+  Object.assign(result, buildPairResult(state.pairFiles, opp, pick));
+  refreshPairReports();
+  renderPairResults();
+  const sel = els.pairResults.querySelector(`.pair-opp-select[data-opp="${CSS.escape(oppId)}"][data-row="${row}"]`);
+  if (sel) sel.focus();
+}
+
+function renderOppCell(result, line, row) {
+  const listsBtn = `
+    <button type="button" class="linkish" data-lists="${escapeAttr(line.themId || "")}">${escapeHtml(line.them)}</button>
+    <div class="pair-sub">${escapeHtml(line.themFaction || "")}</div>`;
+  if (state.pairMode !== "manual") return `<div>${listsBtn}</div>`;
+  return `
+    <div>
+      <select class="pair-opp-select" data-opp="${escapeAttr(result.id)}" data-row="${row}" aria-label="Opponent for ${escapeAttr(line.us)}">
+        ${result.them.map((name, j) => `
+          <option value="${j}" ${result.pick[row] === j ? "selected" : ""}>${escapeHtml(name)}</option>
+        `).join("")}
+      </select>
+      <div class="pair-sub">${escapeHtml(line.themFaction || "")}</div>
+    </div>`;
 }
 
 function scoreClass(n) {
@@ -852,9 +916,11 @@ function renderPairResults() {
   }
   const q = state.pairQuery.trim().toLowerCase();
   const rows = data.results.filter((r) => !q || r.team.toLowerCase().includes(q) || r.region.toLowerCase().includes(q));
+  const bySum = [...data.results].sort((a, b) => a.sum - b.sum);
   const avg = data.results.reduce((s, r) => s + r.sum, 0) / data.results.length;
-  const hardest = data.results[0];
-  const easiest = data.results[data.results.length - 1];
+  const hardest = bySum[0];
+  const easiest = bySum[bySum.length - 1];
+  const manual = state.pairMode === "manual";
 
   els.pairResults.hidden = false;
   els.pairResults.innerHTML = `
@@ -866,11 +932,13 @@ function renderPairResults() {
     </div>
     ${renderPairReportsHtml(data.reports)}
     <div class="pair-toolbar">
-      <p class="hint">Sorted from hardest (lowest total). Missing ratings count as ${SCORE_MISSING}.</p>
+      <p class="hint">${manual
+        ? "Manual pairings: change an opponent, or click a cell in the 5×5, to swap tables. Reports update as you edit."
+        : `Sorted from hardest (lowest total). Missing ratings count as ${SCORE_MISSING}.`}</p>
       <input type="search" id="pair-search" placeholder="Filter teams…" value="${escapeAttr(state.pairQuery)}">
     </div>
     ${rows.map((r) => `
-      <article class="pair-card">
+      <article class="pair-card${manual ? " is-manual" : ""}" data-opp="${escapeAttr(r.id)}">
         <div class="pair-card-head">
           <div>
             <p class="eyebrow">${escapeHtml(r.region)}</p>
@@ -883,21 +951,18 @@ function renderPairResults() {
           <div>Opponent</div>
           <div>Rating</div>
         </div>
-        ${r.lines.map((l) => `
+        ${r.lines.map((l, i) => `
           <div class="pairing-grid pairing-row">
             <div>
               <button type="button" class="linkish" data-lists="${escapeAttr(l.usId || "")}">${escapeHtml(l.us)}</button>
               <div class="pair-sub">${escapeHtml(l.usFaction || "")}</div>
               ${pairingListHtml(l.usLists)}
             </div>
-            <div>
-              <button type="button" class="linkish" data-lists="${escapeAttr(l.themId || "")}">${escapeHtml(l.them)}</button>
-              <div class="pair-sub">${escapeHtml(l.themFaction || "")}</div>
-            </div>
+            ${renderOppCell(r, l, i)}
             <div class="pair-rating"><span class="score-num ${scoreClass(l.score)}">${l.score}${l.missing ? "*" : ""}</span></div>
           </div>
         `).join("")}
-        <details class="matrix-wrap">
+        <details class="matrix-wrap"${state.openMatrices.has(r.id) ? " open" : ""}>
           <summary>5×5 matrix</summary>
           <table class="matrix">
             <thead>
@@ -907,7 +972,7 @@ function renderPairResults() {
               ${r.matrix.map((row, i) => `
                 <tr>
                   <th>${escapeHtml(r.ours[i])}</th>
-                  ${row.map((v, j) => `<td class="heat-${heatScore(v)}${r.pick[i] === j ? " pick" : ""}">${v}</td>`).join("")}
+                  ${row.map((v, j) => `<td class="heat-${heatScore(v)}${r.pick[i] === j ? " pick" : ""}"${manual ? ` data-assign-opp="${escapeAttr(r.id)}" data-row="${i}" data-col="${j}"` : ""}>${v}</td>`).join("")}
                 </tr>
               `).join("")}
             </tbody>
@@ -1251,6 +1316,11 @@ function bindEvents() {
   document.querySelectorAll('input[name="pair-mode"]').forEach((radio) => {
     radio.addEventListener("change", () => {
       state.pairMode = radio.value;
+      if (radio.value === "manual") {
+        if (state.pairResults) renderPairResults();
+        return;
+      }
+      state.lastAutoMode = radio.value;
       if (state.pairResults) generatePairings();
     });
   });
@@ -1263,11 +1333,27 @@ function bindEvents() {
   els.exportPairings.addEventListener("click", exportPairingsCsv);
   els.exportStats.addEventListener("click", exportStatsCsv);
   els.pairResults.addEventListener("click", (e) => {
+    const assign = e.target.closest("[data-assign-opp]");
+    if (assign) {
+      swapPairing(assign.dataset.assignOpp, Number(assign.dataset.row), Number(assign.dataset.col));
+      return;
+    }
     const btn = e.target.closest("[data-lists]");
     if (btn?.dataset.lists) openLists(btn.dataset.lists);
   });
+  els.pairResults.addEventListener("change", (e) => {
+    const sel = e.target.closest(".pair-opp-select");
+    if (!sel) return;
+    swapPairing(sel.dataset.opp, Number(sel.dataset.row), Number(sel.value));
+  });
   els.pairResults.addEventListener("toggle", (e) => {
     if (e.target.classList.contains("pair-reports")) state.reportsOpen = e.target.open;
+    if (e.target.classList.contains("matrix-wrap")) {
+      const id = e.target.closest("[data-opp]")?.dataset.opp;
+      if (!id) return;
+      if (e.target.open) state.openMatrices.add(id);
+      else state.openMatrices.delete(id);
+    }
   }, true);
   els.pairResults.addEventListener("input", (e) => {
     if (e.target.id === "pair-search") {
