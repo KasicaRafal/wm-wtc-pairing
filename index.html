@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="static/style.css?v=16">
+  <link rel="stylesheet" href="static/style.css?v=20">
 </head>
 <body>
   <header class="topbar">
@@ -94,7 +94,7 @@
       <div class="pair-setup">
         <div>
           <h2>Import team ratings</h2>
-          <p class="hint">Drop the exports from all 5 players on the same team. We’ll compute the best pairings against every other team.</p>
+          <p class="hint">Drop the exports from all 5 players on the same team. We’ll compute the best pairings against every other team and summarize table load, coverage, and army profiles.</p>
         </div>
         <div class="drop-zone" id="pair-drop">
           <input type="file" id="pair-files" accept=".json,application/json" multiple hidden>
@@ -109,6 +109,7 @@
           </fieldset>
           <button type="button" class="btn primary" id="generate-btn" disabled>Generate pairings</button>
           <button type="button" class="btn ghost" id="export-pairings" hidden>Export results CSV</button>
+          <button type="button" class="btn ghost" id="export-stats" hidden>Export stats CSV</button>
         </div>
       </div>
       <div id="pair-results" class="pair-results" hidden></div>
@@ -117,7 +118,7 @@
 
   <footer class="about-footer">
     <p><strong>WTC Pairing Planner 2026</strong> is a free fan-made tool for Warmachine World Team Championship pairings.</p>
-    <p>Rate your matchups, export JSON for your teammates, import all five files, and compute 5v5 pairings — maximize total score or avoid the worst tables.</p>
+    <p>Rate your matchups, export JSON for your teammates, import all five files, and compute 5v5 pairings — maximize total score or avoid the worst tables. Pairing reports stay in your browser.</p>
     <p>Team and list data is a snapshot from <a href="https://warmachine.longshanks.org/event/37180/" target="_blank" rel="noopener noreferrer">Longshanks event 37180</a> for WTC 2026. Names and lists may be incomplete, outdated, or mis-parsed — check the event page for the official lists.</p>
     <p>Ratings and pairing math run entirely in your browser. We do not collect your scores. Exports are files you choose to share. <a href="privacy.html">Privacy Policy</a></p>
     <p>Every feature is unlocked for everyone. If the app helps you and you would like to support development, an optional tip is always appreciated (and never required). <a href="https://ko-fi.com/kasi_r" target="_blank" rel="noopener noreferrer">Support development on Ko-fi</a></p>
@@ -137,6 +138,6 @@
     </div>
   </div>
 
-  <script src="static/app.js?v=12"></script>
+  <script src="static/app.js?v=16"></script>
 </body>
 </html>

@@ -19,6 +19,7 @@ const state = {
   pairMode: "sum",
   pairResults: null,
   pairQuery: "",
+  reportsOpen: false,
 };
 
 const els = {
@@ -46,6 +47,7 @@ const els = {
   pairImports: document.getElementById("pair-imports"),
   generateBtn: document.getElementById("generate-btn"),
   exportPairings: document.getElementById("export-pairings"),
+  exportStats: document.getElementById("export-stats"),
   pairResults: document.getElementById("pair-results"),
   listsModal: document.getElementById("lists-modal"),
   listsTitle: document.getElementById("lists-title"),
@@ -583,6 +585,143 @@ function bestAssignment(matrix, mode) {
   return best;
 }
 
+function fmtAvg(n) {
+  return n == null || Number.isNaN(n) ? "—" : n.toFixed(1);
+}
+
+function armyOfPlayer(playerId) {
+  return playerById(playerId)?.player.army || "Unknown";
+}
+
+function armyListLabel(player) {
+  const army = (player?.army || "").trim();
+  const theme = (player?.theme || "").trim();
+  if (army && theme) return `${army} ${theme}`;
+  const faction = (player?.faction || "").replace(" - ", " ").trim();
+  return faction || army || theme || "Unknown";
+}
+
+function buildPairReports(ourTeam, ours, results) {
+  const oppPlayers = state.teams
+    .filter((t) => t.id !== ourTeam.id)
+    .flatMap((t) => t.players);
+
+  const bands = { hard: 0, even: 0, good: 0 };
+  for (const r of results) {
+    if (r.sum <= 14) bands.hard += 1;
+    else if (r.sum <= 17) bands.even += 1;
+    else bands.good += 1;
+  }
+
+  const players = ours.map((file) => {
+    let filled = 0;
+    const given = [];
+    const byArmy = {};
+    for (const opp of oppPlayers) {
+      const detail = scoreDetail(file, opp.id);
+      if (detail.missing) continue;
+      filled += 1;
+      given.push(detail.score);
+      const army = armyListLabel(opp);
+      if (!byArmy[army]) byArmy[army] = [];
+      byArmy[army].push(detail.score);
+    }
+
+    const assigned = [];
+    let worstTables = 0;
+    for (const result of results) {
+      const line = result.lines.find((l) => l.usId === file.playerId || l.us === file.player);
+      if (!line) continue;
+      assigned.push({ score: line.score, team: result.team, them: line.them, missing: line.missing });
+      if (line.score === result.min) worstTables += 1;
+    }
+    const armyStats = Object.entries(byArmy)
+      .filter(([, scores]) => scores.length >= 3)
+      .map(([army, scores]) => ({
+        army,
+        avg: scores.reduce((sum, n) => sum + n, 0) / scores.length,
+        n: scores.length,
+      }))
+      .sort((a, b) => a.avg - b.avg || a.army.localeCompare(b.army));
+
+    return {
+      name: file.player,
+      playerId: file.playerId,
+      faction: file.faction,
+      army: armyOfPlayer(file.playerId),
+      filled,
+      total: oppPlayers.length,
+      avgGiven: given.length ? given.reduce((sum, n) => sum + n, 0) / given.length : null,
+      avgAssigned: assigned.length ? assigned.reduce((sum, row) => sum + row.score, 0) / assigned.length : null,
+      worstTables,
+      weakestArmies: armyStats.slice(0, 5),
+      strongestArmies: armyStats.slice(-5).reverse(),
+      byArmy,
+    };
+  });
+
+  return {
+    bands,
+    players,
+    field: results.length,
+    uncovered: buildUncoveredArmies(players),
+  };
+}
+
+function buildUncoveredArmies(players) {
+  const armies = new Set(players.flatMap((p) => Object.keys(p.byArmy || {})));
+  const rows = [];
+  for (const army of armies) {
+    const playerAvgs = players
+      .map((p) => {
+        const scores = p.byArmy?.[army] || [];
+        return {
+          name: p.name,
+          n: scores.length,
+          avg: scores.length ? scores.reduce((sum, n) => sum + n, 0) / scores.length : null,
+        };
+      })
+      .filter((p) => p.n > 0);
+    const n = Math.max(0, ...playerAvgs.map((p) => p.n));
+    if (n < 3 || !playerAvgs.length) continue;
+    const best = playerAvgs.reduce((a, b) => (a.avg >= b.avg ? a : b));
+    if (best.avg >= 4) continue;
+    rows.push({
+      army,
+      n,
+      bestPlayer: best.name,
+      bestAvg: best.avg,
+      hole: best.avg <= 2 ? "trap" : "gap",
+    });
+  }
+  rows.sort((a, b) => a.bestAvg - b.bestAvg || a.army.localeCompare(b.army));
+  return rows;
+}
+
+function armyChips(rows) {
+  if (!rows.length) return "—";
+  return rows.map((row) => `${row.army} ${row.avg.toFixed(1)}`).join(" · ");
+}
+
+function armyTipHtml(rows) {
+  if (!rows.length) return "—";
+  return `
+    <div class="army-tip" tabindex="0">
+      <span class="army-tip-preview">${escapeHtml(armyChips(rows.slice(0, 2)))}</span>
+      <div class="army-tip-pop" role="tooltip">
+        <ol>
+          ${rows.map((row) => `
+            <li>
+              <span>${escapeHtml(row.army)}</span>
+              <strong>${row.avg.toFixed(1)}</strong>
+              <em>${row.n}</em>
+            </li>
+          `).join("")}
+        </ol>
+      </div>
+    </div>`;
+}
+
 function generatePairings() {
   if (state.pairFiles.length !== 5) {
     toast("Exactly 5 player exports are required.");
@@ -632,9 +771,16 @@ function generatePairings() {
   });
 
   results.sort((a, b) => a.sum - b.sum);
-  state.pairResults = { ourTeam: ourTeam.name, results };
+  state.reportsOpen = false;
+  state.pairResults = {
+    ourTeam: ourTeam.name,
+    ourTeamId: ourTeam.id,
+    results,
+    reports: buildPairReports(ourTeam, ours, results),
+  };
   renderPairResults();
   els.exportPairings.hidden = false;
+  if (els.exportStats) els.exportStats.hidden = false;
 }
 
 function scoreClass(n) {
@@ -669,6 +815,7 @@ function renderPairResults() {
       <div class="stat"><span>Hardest</span><strong>${escapeHtml(hardest.team)} (${hardest.sum})</strong></div>
       <div class="stat"><span>Easiest</span><strong>${escapeHtml(easiest.team)} (${easiest.sum})</strong></div>
     </div>
+    ${renderPairReportsHtml(data.reports)}
     <div class="pair-toolbar">
       <p class="hint">Sorted from hardest (lowest total). Missing ratings count as ${SCORE_MISSING}.</p>
       <input type="search" id="pair-search" placeholder="Filter teams…" value="${escapeAttr(state.pairQuery)}">
@@ -722,6 +869,111 @@ function renderPairResults() {
   `;
 }
 
+function renderPairReportsHtml(reports) {
+  if (!reports) return "";
+  const { bands, players, field, uncovered = [] } = reports;
+  const pct = (n) => (field ? Math.round((n / field) * 100) : 0);
+  return `
+    <details class="pair-reports"${state.reportsOpen ? " open" : ""}>
+      <summary>
+        <span class="reports-chevron" aria-hidden="true"></span>
+        <span class="reports-copy">
+          <p class="eyebrow">Reports</p>
+          <strong>Table load, coverage, and army holes</strong>
+          <span class="hint">Click to expand. Hover Weaker / Stronger for the top 5 armies.</span>
+        </span>
+        <span class="reports-action"></span>
+      </summary>
+      <div class="pair-reports-body">
+        <div class="band-row">
+          <div class="band hard"><span>Tough pairings (≤14)</span><strong>${bands.hard}</strong><em>${pct(bands.hard)}% of ${field} teams</em></div>
+          <div class="band even"><span>Even pairings (15–17)</span><strong>${bands.even}</strong><em>${pct(bands.even)}% of ${field} teams</em></div>
+          <div class="band good"><span>Comfortable (≥18)</span><strong>${bands.good}</strong><em>${pct(bands.good)}% of ${field} teams</em></div>
+        </div>
+        <div class="report-block">
+          <h4>Player pairing load</h4>
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th class="num">Avg assigned</th>
+                <th class="num">Worst tables</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${players.map((p) => `
+                <tr>
+                  <td>
+                    <strong>${escapeHtml(p.name)}</strong>
+                    <div class="pair-sub">${escapeHtml(p.faction || p.army || "")}</div>
+                  </td>
+                  <td class="num"><span class="score-num ${p.avgAssigned == null ? "" : scoreClass(Math.round(p.avgAssigned))}">${fmtAvg(p.avgAssigned)}</span></td>
+                  <td class="num">${p.worstTables}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+        <div class="report-block">
+          <h4>Rating coverage and army profile</h4>
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th class="num">Rated</th>
+                <th class="num">Avg given</th>
+                <th>Weaker vs</th>
+                <th>Stronger vs</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${players.map((p) => {
+                const thin = p.total && p.filled / p.total < 0.85;
+                return `
+                <tr>
+                  <td><strong>${escapeHtml(p.name)}</strong></td>
+                  <td class="num${thin ? " warn" : ""}">${p.filled}/${p.total}</td>
+                  <td class="num">${fmtAvg(p.avgGiven)}</td>
+                  <td>${armyTipHtml(p.weakestArmies)}</td>
+                  <td>${armyTipHtml(p.strongestArmies)}</td>
+                </tr>`;
+              }).join("")}
+            </tbody>
+          </table>
+        </div>
+        <div class="report-block">
+          <h4>Armies without coverage</h4>
+          <p class="hint">No teammate averages 4+ into these lists (min. 3 rated opponents). Closest player is the best you currently have.</p>
+          ${uncovered.length ? `
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Army</th>
+                <th class="num">Rated</th>
+                <th>Closest player</th>
+                <th class="num">Best avg</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${uncovered.map((row) => `
+                <tr>
+                  <td>
+                    <strong>${escapeHtml(row.army)}</strong>
+                    <div class="pair-sub">${row.hole === "trap" ? "Hard hole — everyone is at 1–2" : "No 4+ cover"}</div>
+                  </td>
+                  <td class="num">${row.n}</td>
+                  <td>${escapeHtml(row.bestPlayer)}</td>
+                  <td class="num"><span class="score-num ${scoreClass(Math.round(row.bestAvg))}">${fmtAvg(row.bestAvg)}</span></td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>` : `<p class="hint">Someone on the team averages 4+ into every common army.</p>`}
+        </div>
+      </div>
+    </details>
+  `;
+}
+
 function exportPairingsCsv() {
   const data = state.pairResults;
   if (!data) return;
@@ -733,6 +985,38 @@ function exportPairingsCsv() {
   }
   const csv = lines.map((row) => row.map((c) => `"${String(c).replaceAll('"', '""')}"`).join(";")).join("\n");
   downloadText("\uFEFF" + csv, `wtc-pairings-${slug(data.ourTeam)}.csv`, "text/csv;charset=utf-8");
+}
+
+function csvCell(value) {
+  return `"${String(value ?? "").replaceAll('"', '""')}"`;
+}
+
+function exportStatsCsv() {
+  const data = state.pairResults;
+  const reports = data?.reports;
+  if (!reports) return;
+  const lines = [];
+  lines.push(["Section", "Name", "Metric", "Value"]);
+  lines.push(["Field", data.ourTeam, "Teams", reports.field]);
+  lines.push(["Field", data.ourTeam, "Tough pairings (<=14)", reports.bands.hard]);
+  lines.push(["Field", data.ourTeam, "Even pairings (15-17)", reports.bands.even]);
+  lines.push(["Field", data.ourTeam, "Comfortable pairings (>=18)", reports.bands.good]);
+  for (const p of reports.players) {
+    lines.push(["Player load", p.name, "Avg assigned", fmtAvg(p.avgAssigned)]);
+    lines.push(["Player load", p.name, "Worst tables", p.worstTables]);
+    lines.push(["Coverage", p.name, "Rated", `${p.filled}/${p.total}`]);
+    lines.push(["Coverage", p.name, "Avg given", fmtAvg(p.avgGiven)]);
+    lines.push(["Coverage", p.name, "Weaker vs", armyChips(p.weakestArmies)]);
+    lines.push(["Coverage", p.name, "Stronger vs", armyChips(p.strongestArmies)]);
+  }
+  for (const row of reports.uncovered || []) {
+    lines.push(["Uncovered", row.army, "Closest player", row.bestPlayer]);
+    lines.push(["Uncovered", row.army, "Best avg", fmtAvg(row.bestAvg)]);
+    lines.push(["Uncovered", row.army, "Rated", row.n]);
+    lines.push(["Uncovered", row.army, "Kind", row.hole]);
+  }
+  const csv = lines.map((row) => row.map(csvCell).join(";")).join("\n");
+  downloadText("\uFEFF" + csv, `wtc-pairing-stats-${slug(data.ourTeam)}.csv`, "text/csv;charset=utf-8");
 }
 
 function downloadJson(obj, filename) {
@@ -922,10 +1206,14 @@ function bindEvents() {
   });
   els.generateBtn.addEventListener("click", generatePairings);
   els.exportPairings.addEventListener("click", exportPairingsCsv);
+  els.exportStats.addEventListener("click", exportStatsCsv);
   els.pairResults.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-lists]");
     if (btn?.dataset.lists) openLists(btn.dataset.lists);
   });
+  els.pairResults.addEventListener("toggle", (e) => {
+    if (e.target.classList.contains("pair-reports")) state.reportsOpen = e.target.open;
+  }, true);
   els.pairResults.addEventListener("input", (e) => {
     if (e.target.id === "pair-search") {
       state.pairQuery = e.target.value;
