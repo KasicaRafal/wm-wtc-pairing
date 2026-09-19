@@ -1028,7 +1028,7 @@ function renderPairResults() {
           </div>
           <div class="pair-card-actions">
             <div class="pair-score">Total ${r.sum}/${SCORE_TOTAL_MAX} · min ${r.min}</div>
-            <button type="button" class="btn ghost compact" data-live-opp="${escapeAttr(r.id)}">Live pairing</button>
+            <button type="button" class="btn live-btn" data-live-opp="${escapeAttr(r.id)}">Live pairing</button>
           </div>
         </div>
         <div class="pairing-grid pairing-head">

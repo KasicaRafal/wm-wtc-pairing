@@ -737,9 +737,24 @@ select:focus, input:focus, .score-btn:focus-visible, .btn:focus-visible, .team-i
 }
 .pair-card-actions {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.4rem;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.btn.live-btn {
+  background: var(--brass);
+  color: #0b0f14;
+  border-color: transparent;
+  padding: 0.42rem 0.9rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.btn.live-btn:hover:not(:disabled) {
+  background: #e4b45c;
 }
 
 .live-board {
