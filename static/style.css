@@ -358,6 +358,23 @@ select:focus, input:focus, .score-btn:focus-visible, .btn:focus-visible, .team-i
 }
 .empty-state h2 { font-size: 2rem; margin-bottom: 0.6rem; }
 .empty-state p { color: var(--muted); max-width: 520px; margin: 0 auto; }
+.rate-warn {
+  margin-top: 0.9rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid rgba(212, 162, 76, 0.55);
+  background: #2c2612;
+  color: var(--text);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  max-width: 34rem;
+}
+.empty-state .rate-warn {
+  margin-left: auto;
+  margin-right: auto;
+  color: var(--text);
+}
+.board-head .rate-warn { margin-top: 0.7rem; }
 
 .board-head {
   display: flex;
