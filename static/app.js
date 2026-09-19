@@ -22,6 +22,7 @@ const state = {
   pairQuery: "",
   reportsOpen: false,
   openMatrices: new Set(),
+  liveOppId: null,
 };
 
 const els = {
@@ -515,6 +516,8 @@ function clearPairResults() {
   state.pairQuery = "";
   state.reportsOpen = false;
   state.openMatrices = new Set();
+  state.liveOppId = null;
+  document.getElementById("tab-pair")?.classList.remove("live-focus");
   if (els.exportPairings) els.exportPairings.hidden = true;
   if (els.exportStats) els.exportStats.hidden = true;
   if (els.pairResults) {
@@ -621,18 +624,30 @@ function scoreDetail(exportFile, opponentId) {
   return { score: SCORE_MISSING, missing: true, listKey };
 }
 
-function bestAssignment(matrix, mode) {
+function bestAssignment(matrix, mode, locked = {}) {
   const n = matrix.length;
-  const idxs = Array.from({ length: n }, (_, i) => i);
+  const lockMap = {};
+  Object.entries(locked || {}).forEach(([row, col]) => {
+    const i = Number(row);
+    const j = Number(col);
+    if (Number.isInteger(i) && Number.isInteger(j) && i >= 0 && j >= 0) lockMap[i] = j;
+  });
+  const usedCols = new Set(Object.values(lockMap));
+  const freeRows = Array.from({ length: n }, (_, i) => i).filter((i) => lockMap[i] === undefined);
+  const freeCols = Array.from({ length: n }, (_, i) => i).filter((j) => !usedCols.has(j));
   let best = null;
-  for (const perm of permutations(idxs)) {
-    const scores = perm.map((j, i) => matrix[i][j]);
+  const perms = permutations(freeCols);
+  for (const perm of perms) {
+    const full = Array(n).fill(-1);
+    Object.entries(lockMap).forEach(([i, j]) => { full[Number(i)] = j; });
+    freeRows.forEach((row, k) => { full[row] = perm[k]; });
+    const scores = full.map((j, i) => matrix[i][j]);
     const sum = scores.reduce((a, b) => a + b, 0);
     const min = Math.min(...scores);
     const better = !best
       || (mode === "min" && (min > best.min || (min === best.min && sum > best.sum)))
       || (mode !== "min" && (sum > best.sum || (sum === best.sum && min > best.min)));
-    if (better) best = { perm, scores, sum, min };
+    if (better) best = { perm: full, scores, sum, min };
   }
   return best;
 }
@@ -788,12 +803,13 @@ function scoredAssignment(matrix, perm) {
   };
 }
 
-function buildPairResult(ours, opp, pick) {
+function buildPairResult(ours, opp, pick, locked) {
   const details = ours.map((me) => opp.players.map((them) => scoreDetail(me, them.id)));
   const matrix = details.map((row) => row.map((d) => d.score));
+  const locks = { ...(locked || {}) };
   const best = pick
     ? scoredAssignment(matrix, pick)
-    : bestAssignment(matrix, optimizerMode());
+    : bestAssignment(matrix, optimizerMode(), locks);
   const lines = best.perm.map((j, i) => {
     const themPlayer = opp.players[j];
     const usPlayer = playerById(ours[i].playerId)?.player;
@@ -808,6 +824,7 @@ function buildPairResult(ours, opp, pick) {
       themFaction: themPlayer.faction,
       score: best.scores[i],
       missing: detail.missing,
+      locked: locks[i] === j,
     };
   });
   return {
@@ -822,6 +839,7 @@ function buildPairResult(ours, opp, pick) {
     ours: ours.map((p) => p.player),
     them: opp.players.map((p) => p.name),
     pick: best.perm.slice(),
+    locked: locks,
   };
 }
 
@@ -843,6 +861,7 @@ function generatePairings() {
   results.sort((a, b) => a.sum - b.sum);
   state.reportsOpen = false;
   state.openMatrices = new Set();
+  state.liveOppId = null;
   state.pairResults = {
     ourTeam: ourTeam.name,
     ourTeamId: ourTeam.id,
@@ -860,6 +879,63 @@ function refreshPairReports() {
   const ourTeam = teamById(data.ourTeamId) || state.teams.find((t) => t.name === data.ourTeam);
   if (!ourTeam) return;
   data.reports = buildPairReports(ourTeam, state.pairFiles, data.results);
+}
+
+function enterLivePairing(oppId) {
+  if (!state.pairResults) return;
+  const result = state.pairResults.results.find((r) => r.id === oppId);
+  if (!result) return;
+  if (!result.locked) result.locked = {};
+  state.liveOppId = oppId;
+  renderPairResults();
+  document.querySelector(".live-bar")?.scrollIntoView({ block: "start" });
+}
+
+function exitLivePairing() {
+  state.liveOppId = null;
+  if (state.pairResults) {
+    state.pairResults.results.sort((a, b) => a.sum - b.sum);
+    refreshPairReports();
+  }
+  renderPairResults();
+}
+
+function liveResult() {
+  return state.pairResults?.results.find((r) => r.id === state.liveOppId) || null;
+}
+
+function applyLiveAssignment(result) {
+  const opp = teamById(result.id);
+  if (!opp || state.pairFiles.length !== 5) return;
+  const locked = { ...(result.locked || {}) };
+  Object.assign(result, buildPairResult(state.pairFiles, opp, null, locked));
+  refreshPairReports();
+  renderPairResults();
+}
+
+function toggleLiveLock(row, col) {
+  const result = liveResult();
+  if (!result) return;
+  const locked = { ...(result.locked || {}) };
+  if (locked[row] === col) {
+    delete locked[row];
+  } else {
+    const taken = Object.entries(locked).find(([i, j]) => Number(i) !== row && Number(j) === col);
+    if (taken) {
+      toast("That opponent is already locked.");
+      return;
+    }
+    locked[row] = col;
+  }
+  result.locked = locked;
+  applyLiveAssignment(result);
+}
+
+function clearLiveLocks() {
+  const result = liveResult();
+  if (!result) return;
+  result.locked = {};
+  applyLiveAssignment(result);
 }
 
 function swapPairing(oppId, row, col) {
@@ -910,8 +986,14 @@ function heatScore(n) {
 
 function renderPairResults() {
   const data = state.pairResults;
+  const tab = document.getElementById("tab-pair");
+  if (tab) tab.classList.toggle("live-focus", Boolean(state.liveOppId));
   if (!data) {
     els.pairResults.hidden = true;
+    return;
+  }
+  if (state.liveOppId) {
+    renderLivePairing(data);
     return;
   }
   const q = state.pairQuery.trim().toLowerCase();
@@ -934,7 +1016,7 @@ function renderPairResults() {
     <div class="pair-toolbar">
       <p class="hint">${manual
         ? "Manual pairings: change an opponent, or click a cell in the 5×5, to swap tables. Reports update as you edit."
-        : `Sorted from hardest (lowest total). Missing ratings count as ${SCORE_MISSING}.`}</p>
+        : `Sorted from hardest (lowest total). Missing ratings count as ${SCORE_MISSING}. Live pairing locks tables on one team; unlocked tables re-pair automatically.`}</p>
       <input type="search" id="pair-search" placeholder="Filter teams…" value="${escapeAttr(state.pairQuery)}">
     </div>
     ${rows.map((r) => `
@@ -944,7 +1026,10 @@ function renderPairResults() {
             <p class="eyebrow">${escapeHtml(r.region)}</p>
             <h3>${escapeHtml(r.team)}</h3>
           </div>
-          <div class="pair-score">Total ${r.sum}/${SCORE_TOTAL_MAX} · min ${r.min}</div>
+          <div class="pair-card-actions">
+            <div class="pair-score">Total ${r.sum}/${SCORE_TOTAL_MAX} · min ${r.min}</div>
+            <button type="button" class="btn ghost compact" data-live-opp="${escapeAttr(r.id)}">Live pairing</button>
+          </div>
         </div>
         <div class="pairing-grid pairing-head">
           <div>Our player</div>
@@ -980,6 +1065,78 @@ function renderPairResults() {
         </details>
       </article>
     `).join("")}
+  `;
+}
+
+function renderLivePairing(data) {
+  const r = data.results.find((row) => row.id === state.liveOppId);
+  if (!r) {
+    state.liveOppId = null;
+    renderPairResults();
+    return;
+  }
+  const locked = r.locked || {};
+  const lockedCount = Object.keys(locked).length;
+  const modeLabel = (state.lastAutoMode || "sum") === "min" ? "Avoid the worst" : "Maximize total";
+  els.pairResults.hidden = false;
+  els.pairResults.innerHTML = `
+    <div class="live-board">
+      <div class="live-bar">
+        <button type="button" class="btn ghost" data-live-exit>Back to pairings</button>
+        <div class="live-title">
+          <p class="eyebrow">Live pairing · ${escapeHtml(r.region)}</p>
+          <h2>${escapeHtml(r.team)}</h2>
+        </div>
+        <div class="pair-score">Total ${r.sum}/${SCORE_TOTAL_MAX} · min ${r.min}</div>
+        <button type="button" class="btn ghost compact" data-live-clear ${lockedCount ? "" : "disabled"}>Clear locks</button>
+      </div>
+      <p class="hint">Click a cell to lock that table. Click a locked cell to release it. Unlocked tables re-pair automatically (${escapeHtml(modeLabel)}). ${lockedCount}/5 locked.</p>
+      <div class="live-matrix-wrap">
+        <table class="matrix matrix-live">
+          <thead>
+            <tr><th></th>${r.them.map((n) => `<th>${escapeHtml(n)}</th>`).join("")}</tr>
+          </thead>
+          <tbody>
+            ${r.matrix.map((row, i) => `
+              <tr>
+                <th>${escapeHtml(r.ours[i])}</th>
+                ${row.map((v, j) => {
+                  const isPick = r.pick[i] === j;
+                  const isLock = locked[i] === j;
+                  const colTaken = Object.entries(locked).some(([rowIdx, col]) => Number(rowIdx) !== i && Number(col) === j);
+                  const classes = [
+                    `heat-${heatScore(v)}`,
+                    isPick ? "pick" : "",
+                    isLock ? "lock" : "",
+                    colTaken ? "blocked" : "",
+                  ].filter(Boolean).join(" ");
+                  return `<td class="${classes}" data-live-row="${i}" data-live-col="${j}">${v}${isLock ? "<span>LOCK</span>" : ""}</td>`;
+                }).join("")}
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+      <div class="pairing-grid pairing-head">
+        <div>Our player</div>
+        <div>Opponent</div>
+        <div>Rating</div>
+      </div>
+      ${r.lines.map((l, i) => `
+        <div class="pairing-grid pairing-row${locked[i] != null ? " is-locked" : ""}">
+          <div>
+            <button type="button" class="linkish" data-lists="${escapeAttr(l.usId || "")}">${escapeHtml(l.us)}</button>
+            <div class="pair-sub">${escapeHtml(l.usFaction || "")}</div>
+            ${pairingListHtml(l.usLists)}
+          </div>
+          <div>
+            <button type="button" class="linkish" data-lists="${escapeAttr(l.themId || "")}">${escapeHtml(l.them)}</button>
+            <div class="pair-sub">${escapeHtml(l.themFaction || "")}${locked[i] != null ? " · Locked" : " · Auto"}</div>
+          </div>
+          <div class="pair-rating"><span class="score-num ${scoreClass(l.score)}">${l.score}${l.missing ? "*" : ""}</span></div>
+        </div>
+      `).join("")}
+    </div>
   `;
 }
 
@@ -1317,10 +1474,16 @@ function bindEvents() {
     radio.addEventListener("change", () => {
       state.pairMode = radio.value;
       if (radio.value === "manual") {
+        state.liveOppId = null;
         if (state.pairResults) renderPairResults();
         return;
       }
       state.lastAutoMode = radio.value;
+      const live = liveResult();
+      if (live) {
+        applyLiveAssignment(live);
+        return;
+      }
       if (state.pairResults) generatePairings();
     });
   });
@@ -1333,6 +1496,24 @@ function bindEvents() {
   els.exportPairings.addEventListener("click", exportPairingsCsv);
   els.exportStats.addEventListener("click", exportStatsCsv);
   els.pairResults.addEventListener("click", (e) => {
+    const liveOpp = e.target.closest("[data-live-opp]");
+    if (liveOpp) {
+      enterLivePairing(liveOpp.dataset.liveOpp);
+      return;
+    }
+    if (e.target.closest("[data-live-exit]")) {
+      exitLivePairing();
+      return;
+    }
+    if (e.target.closest("[data-live-clear]")) {
+      clearLiveLocks();
+      return;
+    }
+    const liveCell = e.target.closest("[data-live-row]");
+    if (liveCell) {
+      toggleLiveLock(Number(liveCell.dataset.liveRow), Number(liveCell.dataset.liveCol));
+      return;
+    }
     const assign = e.target.closest("[data-assign-opp]");
     if (assign) {
       swapPairing(assign.dataset.assignOpp, Number(assign.dataset.row), Number(assign.dataset.col));

@@ -720,14 +720,67 @@ select:focus, input:focus, .score-btn:focus-visible, .btn:focus-visible, .team-i
 .army-tip-pop strong { font-variant-numeric: tabular-nums; color: var(--brass); }
 .army-tip-pop em { color: var(--muted); font-style: normal; font-size: 0.78rem; }
 
+#tab-pair.live-focus .example-banner,
+#tab-pair.live-focus .pair-setup > div:nth-of-type(2),
+#tab-pair.live-focus .drop-zone,
+#tab-pair.live-focus .import-row {
+  display: none;
+}
+
 .pair-card { padding: 1rem 1.1rem; }
 .pair-card-head {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  align-items: baseline;
+  align-items: flex-start;
   margin-bottom: 0.85rem;
 }
+.pair-card-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+}
+
+.live-board {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.1rem 1.2rem 1.3rem;
+}
+.live-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem 1rem;
+  margin-bottom: 0.75rem;
+  scroll-margin-top: 8rem;
+}
+.live-title { flex: 1; min-width: 12rem; }
+.live-title h2 { font-size: 1.7rem; }
+.live-matrix-wrap { overflow-x: auto; margin: 0.9rem 0 1.1rem; }
+.matrix-live { font-size: 0.88rem; margin-top: 0; }
+.matrix-live th, .matrix-live td {
+  padding: 0.65rem 0.4rem;
+  min-width: 5.4rem;
+}
+.matrix-live td { cursor: pointer; }
+.matrix-live td span {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: #f3d48a;
+}
+.matrix-live td.lock {
+  outline: 2px solid #f3d48a;
+  outline-offset: -2px;
+  box-shadow: inset 0 0 0 1px #0b0f14;
+}
+.matrix-live td.blocked { cursor: not-allowed; opacity: 0.45; }
+.matrix-live td:hover:not(.blocked) { filter: brightness(1.12); }
+.pairing-row.is-locked { background: #241d12; margin: 0 -0.4rem; padding-left: 0.4rem; padding-right: 0.4rem; }
 .pair-card-head h3 { font-size: 1.35rem; }
 .pair-score { font-size: 1.2rem; font-weight: 700; color: var(--brass); white-space: nowrap; }
 
